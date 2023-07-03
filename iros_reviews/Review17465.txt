@@ -1,0 +1,74 @@
+Reviewer 2 of IROS 2023 submission 2887
+
+Comments to the author
+======================
+
+This paper proposes a two-stage trajectory optimization for
+the design and execution of agile jumping maneuvers. The
+proposed framework works as follows. A take-off
+the optimization problem is formulated using a general
+floating-base dynamic model and an accurate actuation
+model. This method can maximize the apex height by
+optimizing take-off trajectory parameters. A landing
+optimization problem is formulated using the impact
+dynamics and energy flow models. This method can
+maximize regenerated energy by optimizing landing
+configuration and impedance. The two optimizations are
+offline and validated on a single leg in simulation and
+hardware. 
+
+While the two-stage trajectory optimization mentioned in
+the paper is interesting, basically, the authors should add
+more experiments to verify their method. Here are the
+comments:
+
+(1)In the Experimental setup section of the author's video,
+I noticed that they have a 50:1 gear ratio, according to my
+experience, a large portion of the recovered energy may be
+lost in the transmission. And in the measured regeneration
+part of the author’s video, I noticed that the regeneration
+power is relatively small compared to the takeoff power.
+So, is it necessary to do the optimization of energy
+regeneration?
+(2)The authors mention energy recovery as an innovation in
+their article, so I think it is also necessary to explain
+how energy recovery is implemented at the hardware level. 
+(3)Energy regeneration is an important part of the paper,
+the authors only gave simulation results in Section IV B,
+and only compared a set of Kd, and Kp values, I think the
+authors need to give the hardware test results while
+comparing more Kd, Kp, and q.
+(4)In Fig.3. and Fig.8., the authors did experiments to
+verify their actuator model and power flow model, but these
+experiments were conducted at relatively low speed, how to
+ensure that these models are still accurate under the
+the high-speed motion of jumping?
+(5)There have been a lot of papers on a quadruped robot
+jumping problems such as gradient-based or learning-based
+jumping methods, so a comparison with these methods should
+be added in the INTRODUCTION or PROBLEM FRAMING AND STATE
+OF THE ART section.
+(6)In equations (7) and (35), the authors choose to take
+the different cost functions quadratically and add them
+directly without giving weights. Does this reduce the
+convergence speed of the algorithm because lf, lv, etc. are
+of different magnitudes and thus have different effects on
+the final cost?
+(7)In equations (21) and (44), can these two equations be
+written in a more mathematical form?
+(8)In Fig.4. What do the title ‘v’ and ‘iq’ of Joint
+accelerations and ground reaction force mean?
+(9)In Fig.9. and Fig.10., it seems that the error between
+the computed value and the hardware test value are not
+small, can you explain where the error comes from?
+(10)In Sections IV A and B part, the authors mention the
+iterations before the convergence of their take-off and
+landing optimization, I think convergence curves with
+iterations need to be added to the two optimizations.
+
+Comments on the Video Attachment
+================================
+
+The content of the video basically shows the work of the
+paper, but more videos about the experiments need to be
+added so that the reader can better understand the paper.

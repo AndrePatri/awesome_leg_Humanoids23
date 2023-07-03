@@ -1,0 +1,52 @@
+Reviewer 11 of IROS 2023 submission 2887
+
+Comments to the author
+======================
+
+The main content of this paper is related with single leg
+jump and landing energy harvest by optimization. The author
+separate the task into 2 phases optimization: (1)Take-off
+optimization whose aim is to reach the maximum jump height;
+(2)Lading phase optimization in which maximizing the energy
+regeneration. The idea of paper is interesting, but I don’t
+think the results are enough to support it. Here are some
+comments and recommendations:
+
+1.Since energy regeneration is a important research points
+of paper, how to harvest the kinetic energy in hardware
+should be clarified.
+
+2.In the take-off optimization, energy cost and jump height
+are important parts in the cost function. However, I have
+not seen anything related with them in your experiment and
+simulation (e.g. maxim jump height and its energy cost).
+
+3.In section III C, you mentions that there will be some
+problems if jerk and yank are not considered in the
+optimization. It seems that at the end of take-off phase
+the leg joints will be closed to the singular position
+(when the leg is in a straight line configuration) which
+causes the problem. So I think it is because of kinematic
+singularity instead of jerk or yank.
+
+4.The paper uses simulation results to verify the
+optimization about energy regeneration, which I think it is
+not reasonable. Considering that the gear ratio of motor is
+50:1 and the optimization result is counterintuitve, lots
+of energy may be diminished during transmission. So I doubt
+that how much energy can be harvested. It will be more
+convincing that experiment in the leg prototype about
+energy harvest can be added in the Section IV in the paper.
+
+5.In the Fig.11, there are only two sets of impedance
+setpoints are compared, and I think it is not enough to
+prove that the setpoint from your optimization framework is
+optimal and converge. I recommend that more sets should be
+added, especially the setpoints closed to your optimal ones
+should be added.
+
+Comments on the Video Attachment
+================================
+
+As I mentioned in the comments, more experiments are
+needed.

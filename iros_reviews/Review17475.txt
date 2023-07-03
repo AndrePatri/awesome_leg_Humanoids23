@@ -1,0 +1,68 @@
+Reviewer 6 of IROS 2023 submission 2887
+
+Comments to the author
+======================
+
+This paper presents a study of jumping maneuvers of a
+single-leg system, towards developing a high-payload but
+agile quadruped robot. With the models of actuation and
+energy flow, two TO problems accounting for take-off and
+braking phases are formulated. Simulation and experimental
+results are provided.
+
+To improve the paper, several comments or suggestions are
+given below:
+
+1) The motivation is not clear. This paper focuses on the
+study of a single leg and its jumping behavior, but the
+ultimate goal of this research will be bringing up a new
+heavy-duty and electrically powered agile quadruped.
+Obviously, there is a gap between single-leg control and
+quadruped robot control. The sophisticated strategy for
+single-leg jumping control may not work for the quadruped
+robot. The Reviewer suggests that the authors should only
+claim a single-leg jumping study; otherwise, the motivation
+of this paper is not clear and valid.
+
+2) Contribution 1 is weak because the TO formulation is
+standard. The Reviewer suggests that this contribution
+should be removed. Moreover, the TO formulation for
+single-leg jumping is not new anymore.
+
+3) Contribution 2 makes this paper special, so the authors
+can really focus on this point and make it become a core
+idea.
+
+4) \Lamda is not defined in (32).
+
+5) The "impact ratio" only depends on the leg configuration
+angles. An easier way is to set a "good" leg configuration
+while landing, then the complex TO problem seems kind of
+redundant. Please explain more about this concern.
+
+6) The authors consider their work as "Agile Jumping
+Maneuvers", which is overclaimed. How agile is agile?
+Sometimes, people may consider forward/back flips as
+"agile" motions because such motions have been common
+sense. If only focusing on jumping, pursuing the highest
+jumping height can be also considered to be agile, e.g.,
+[1]. Any customized metric for "agile" motions would be
+also helpful, but it can not be found in this paper.
+
+Overall, this paper provides a relatively comprehensive
+study. However, the high-level motivation based on a future
+quadruped robot development and the claim on "Agile Jumping
+Maneuvers" are not convincing. The authors can improve the
+paper by clarifying the motivation for single-leg jumping
+(e.g., energy regeneration) and defining agility metrics if
+any.
+
+[1] Hawkes, E.W., Xiao, C., Peloquin, RA. et al. Engineered
+jumpers overcome biological limits via work multiplication.
+Nature 604, 657–661 (2022).
+https://doi.org/10.1038/s41586-022-04606-3
+
+Comments on the Video Attachment
+================================
+
+It helps understand this work
