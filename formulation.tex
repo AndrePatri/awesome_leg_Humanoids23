@@ -12,7 +12,7 @@ where $B\in\mathbb{R}^{n_v\times n_v}$ and $C\in\mathbb{R}^{n_v\times n_v}$ are,
 
 \subsection{Actuator modeling: quadrature current estimation}
 % As already highlighted in Sections~\ref{sec:introduction} and ~\ref{sec:prb_def}, jumping motions are particularly demanding for the robot. In particular, the high torques required to perform the take-off and to stop the robot after the impact have to be produced by the Brushless Direct Current (BLDC) actuators of the leg. 
-It is known~\cite{foc::krause2013analysis} that the torque-quadrature current characteristic for Brushless Direct Current (BLDC) actuators actuators is well approximated by the relationship
+It is known~\cite{foc::krause2013analysis} that the torque-quadrature current characteristic for Brushless Direct Current (BLDC) actuators is well approximated by the relationship
 \begin{equation}\label{eq:torque_iq}
 \tau_m = K_t\,i_q
 \end{equation}
@@ -34,7 +34,7 @@ Specifically, we use the simple Coulomb-like friction model
 \begin{equation} \label{eq:friction_torque}
 \tau_{\mathrm{fl}} = - K_{\mathrm{f, s}}\,\mathrm{signh}({v_l}) - K_{\mathrm{f, d}}\,v_l
 \end{equation}
-where $\mathrm{signh}$ is a smooth approximation of the sign function based on the hyperbolic tangent and the scalars $K_{\mathrm{f, s}}$ and $K_{\mathrm{f, d}}$ are the static and dynamic friction coefficients respectively. We employ~\eqref{eq:rotor_dyn_friction} to estimate the friction coefficients in~\eqref{eq:friction_torque} by solving a simple least-squares regression problem with data collected during suitable calibration trajectories. Figure~\ref{fig:iq_model_tracking} shows the tracking performance of such a calibrated model w.r.t. actual measurements.
+where $\mathrm{signh}()$ is a smooth approximation of the sign function based on the hyperbolic tangent and the scalars $K_{\mathrm{f, s}}$ and $K_{\mathrm{f, d}}$ are the static and dynamic friction coefficients respectively. We employ~\eqref{eq:rotor_dyn_friction} to estimate the friction coefficients in~\eqref{eq:friction_torque} by solving a simple least-squares regression problem with data collected during suitable calibration trajectories. Figure~\ref{fig:iq_model_tracking} shows the tracking performance of such a calibrated model w.r.t. actual measurements.
 \begin{figure}
     \centering
     \includegraphics[width=1.0\columnwidth]{images/iq_tracking.pdf}
@@ -57,15 +57,15 @@ The running cost of the TO is formulated as
 \begin{dmath}\label{eq:takeoff_running_cost}
     \ell_{t}(x_t,~u_t) = \ell_f + \ell_{\dot{f}} + \ell_{v} +  \ell_{\dot{v}} + \ell_{\ddot{v}}
 \end{dmath}
-where the costs $\ell_{f}$, $\ell_{\dot{f}}$, $\ell_{v}$, $\ell_{\dot{v}}$, $\ell_{\ddot{v}}$ are all quadratic in, respectively, $f$, the yank $\dot{f}$, $v$, $\dot{v}$ and the jerk $\ddot{v}$. 
+where the weighted costs $\ell_{f}$, $\ell_{\dot{f}}$, $\ell_{v}$, $\ell_{\dot{v}}$, $\ell_{\ddot{v}}$ are all quadratic in, respectively, $f$, the yank $\dot{f}$, $v$, $\dot{v}$ and the jerk $\ddot{v}$. 
 The cost for the maximization of the CoM height $h_{\mathrm{CoM}}$ is implemented as a terminal constraint at the apex time $T_{\mathrm{apex}}$ of the form 
 \begin{equation}\label{eq:max_com}
-\ell_{\mathrm{CoM}}(T_{\mathrm{apex}}) = \dfrac{1}{h_{CoM}(q(T_{\mathrm{apex}})) + \epsilon}
+\ell_{\mathrm{CoM}}^F(T_{\mathrm{apex}}) = \dfrac{1}{h_{CoM}(q(T_{\mathrm{apex}})) + \epsilon}
 \end{equation}
 where $\epsilon$ is a small positive number to avoid singularities.
 The only non-linear cost is the term $\ell_{\mathrm{CoM}}$, which maximizes the height of the CoM. The integral cost of the take-off TO can hence be written as
 \begin{dmath}\label{eq:takeoff_opt_L}
-    L_{t} \left( W_t\right) = \ell_{\mathrm{CoM}} + \int_{0}^{T_{\mathrm{takeoff}}}\,\ell_{t}(\tau)\,d\tau + \int_{0}^{T_{\mathrm{apex}}}\,\ell_{t}(\tau)\,d\tau
+    L_{t} \left( W_t\right) = \ell_{\mathrm{CoM}}^F + \int_{0}^{T_{\mathrm{apex}}}\,\ell_{t}(\tau)\,d\tau
 \end{dmath}
 where
 \begin{equation}\label{takeoff_opt:opt_vars}
@@ -94,7 +94,7 @@ We also impose the apex at the final instant with the terminal constraint
 % The flight phase is imposed by constraining the contact force to be null after the takeoff, up to the final instant. Furthermore $f$ should always be positive and its tangential component $f$ should lie inside the friction pyramid defined by the coefficient~$\mu$ and the tangential an normal components $f_t$ and $f_n$. Summing up:
 We impose contact and friction contraints on $f$ with
 \begin{eqnarray}\label{eq:f_cnstrnt}
-&f \geq 0;~t\in\left[0, T_{\mathrm{takeoff}}\right] \\
+&f \geq 0;~t\in\left[0, T_{\mathrm{takeoff}}\right] \label{eq:f_positive} \\
 &f = 0; ~t\in\left[T_{\mathrm{takeoff}}, T_{\mathrm{apex}}\right] \\
 &-\mu\,f_n \leq f_t\leq \mu\,f_n;~t\in\left[0, T_{\mathrm{takeoff}}\right] 
 \end{eqnarray}
@@ -216,7 +216,7 @@ In Section~\ref{sec:prb_def} we have already qualitatively highlighted how durin
 
 When performing Field Oriented Control on BLDC motors (like in our case), it is possible to write the power balance from the battery towards the actuators in the so called \textit{qd0} reference frame employing the Park transform~\cite{foc::krause2013analysis} as 
 \begin{equation}\label{eq:power_balance}
-    p_{\mathrm{batt}} = - \dfrac{3}{2}\,\left(R\,i_{q}^2 + L_q\,i_{q}\,\dfrac{d}{dt}\,i_q\,\right) + K_t\,i_q\,v_m
+    p_{\mathrm{batt}} = - \dfrac{3}{2}\,\left(R\,i_{q}^2 + L_q\,i_{q}\,\dfrac{d}{dt}\,i_q\,\right) - K_t\,i_q\,v_m
 \end{equation}
 where $R$ and $L_q$ are the phase resistance and quadrature inductance of the motors and $v_m$ is the rotor velocity. The relationship, for simplicity, is shown for a single actuator. Equation~\eqref{eq:power_balance} can be integrated over an arbitrary interval of time to obtain the energy flow as 
 \begin{dmath} \label{eq:energy_flow}
@@ -232,32 +232,28 @@ Figures~\ref{fig:fixed_imp_reg_energy} and~\ref{fig:fixed_conf_reg_energy} repor
     \label{fig:reg_pow_model_tracking}
 \end{figure}
 The model~\eqref{eq:power_balance} was also successfully validated on the real hardware by employing a suitable power sensing setup. The results of the validation are shown and briefly discusses in Fig.~\ref{fig:reg_pow_model_tracking}. 
-\subsection{Post-impact optimization: maximizing energy recovery}\label{subsec:energy_rec_opt}
+\subsection{Post-impact optimization: minimizing impact impulse and maximizing energy recovery}\label{subsec:energy_rec_opt}
 Motivated by the results shown in Fig~\ref{fig:fixed_conf_reg_energy} and~\ref{fig:fixed_imp_reg_energy} and~\ref{fig:impact_ratio}, we formulate a suitable TO to jointly address the impact and power regeneration during the braking phases. As done in Sec~\ref{subsec:takeoff_opt} we employ an inverse dynamics-based formulation. In this case, the running cost takes the form
 \begin{dmath}\label{eq:takeoff_running_cost_braking}
-    \ell_{b}(x_b, u_b) = \ell_{e_{\mathrm{batt}}} + \ell_f + \ell_{\dot{v}}
+    \ell_{b}(x_b, u_b) = \ell_{p_{\mathrm{batt}}} + \ell_f + \ell_{\dot{v}}
 \end{dmath}
 where
 \begin{eqnarray}
     x_b = \left[q,\,v\right]\\
     u_b = \left[\dot{v},\,f\right]
 \end{eqnarray}
-and $\ell_f$ and $\ell_{\dot{v}}$ are simple quadratic regularizations on the inputs. In this case, being the braking a less dynamic phase than the take-off, we don't employ the additional regularization terms on the $\ddot{v}$ and $\dot{f}$ (see Sec.~\ref{subsec:takeoff_opt}). $\ell_{e_{\mathrm{batt}}}$ is build using~\eqref{eq:power_balance}, but neglecting the inductive term. 
-Differently from before, we formulate the problem with a fixed phase duration and impose the impact dynamics laws of Section~\ref{subsec:impact_min} only at the initial instant of the optimization horizon, where $v^{-}$ assumes the role of a parameter of the problem. We furthermore use the following a simple quadratic terminal cost $\ell_{v, f}$ to promote low velocities at the end of the horizon (the leg needs to break).
+and $\ell_f$ and $\ell_{\dot{v}}$ are simple weighted quadratic regularizations on the inputs. In this case, being the braking a less dynamic phase than the take-off, we don't employ the additional regularization terms on the $\ddot{v}$ and $\dot{f}$ (see Sec.~\ref{subsec:takeoff_opt}). The weighted stage cost $\ell_{p_{\mathrm{batt}}}$ is build using directly $- p_{\mathrm{batt}}$~\eqref{eq:power_balance} and neglecting the inductive term. 
+Differently from before, we formulate the problem with a fixed phase duration $T_f$ and impose the impact dynamics laws of Section~\ref{subsec:impact_min} only at the initial instant of the optimization horizon, where $v^{-}$~\eqref{eq:impact_dyn} assumes the role of a parameter of the problem. To encourage impact mitigation, we use a weighted initial cost $\ell_{\Delta E_k}^{I}$, based directly on~\eqref{eq:delta_e_k}. We furthermore use a simple weighted quadratic terminal cost $\ell_{v}^F$ to promote low velocities at the end of the horizon (the leg needs to break).
 % \begin{eqnarray}\label{eq:reg_v}
 %     % &\ell_{v, i} = \dfrac{1}{v(0)^T\,v(0) + \epsilon}\\
 %     &\ell_{v, f} = v^T(T_f)\,v(T_{f})
 % \end{eqnarray}
 % The first term helps the solver not to get stuck in the local minima of the straight leg landing configuration n.$[0]$: looking at Figure~\ref{fig:impact_ratio}, the slope of the impact curve near the origin is small, which could cause slow convergence issues. The second term $\ell_{\dot{v}, f}$ is a simple quadratic cost to promote low velocities at the end of the horizon (the leg needs to break).
-Once again, we employ the ground contact constraint~\eqref{eq:tip_on_ground} on the whole TO horizon, the force constraint
-\begin{eqnarray}\label{eq:f_cnstrntf}
-    f \geq 0 
-\end{eqnarray}
-and more importantly, we impose a joint impedance controller with
+Once again, we employ the ground contact and force constraints ~\eqref{eq:tip_on_ground},~\eqref{eq:f_positive}, this time on the whole TO horizon. More importantly, we impose a joint impedance controller with
 \begin{eqnarray}\label{eq:imp_cntrl}
     \tau_{l} - K_p\,\circ\,\left(q_{l} - \hat{q}\right) - K_d\,\circ\,\left(\dot{q}_{l} - 0 \right)= 0 
 \end{eqnarray}
-where $\tau_{l}$, $q_{l}$, $\dot{q}_{l}$ refer to the actuated joint only, $K_p\in\mathbb{R}^{2}$ and $K_d\in\mathbb{R}^{2}$ are, respectively, stiffness and impedance gain vectors, which are to be optimized and $\hat{q}$ is the reference configuration for the impedance controller, which we choose to keep constant through the horizon and equal to the landing configuration. The symbol $\circ$ is used to indicate the element-wise product between the operands.
+where $\tau_{l}$, $q_{l}$, $\dot{q}_{l}$ refer to the actuated joint only, $K_p\in\mathbb{R}^{2}$ and $K_d\in\mathbb{R}^{2}$ are, respectively, stiffness and impedance gain vectors, which are to be optimized and $\hat{q}$ is the reference configuration for the impedance controller, which is kept constant through the horizon and equal to the landing configuration. The symbol $\circ$ is used to indicate the element-wise product between the operands.
 Our final braking problem takes the form
 \begin{subequations}\label{eq::braking_opt_prb}
 	\begin{dmath}
@@ -266,8 +262,8 @@ Our final braking problem takes the form
 	\centering\text{subject to}
 	\begin{eqnarray}
 	&\text{rigid body dynamics}~\eqref{eq:rigid_body_dyn}\\
-    &\text{foot tip contact}\\
-    &\text{constraints} \text{~\eqref{eq:f_cnstrntf}~and~ \eqref{eq:imp_cntrl}} \\
+    &\text{foot tip contact}~\eqref{eq:tip_on_ground},~\eqref{eq:f_positive}~\text{up to}~T_f\\
+    &\text{joint impedance control}~ \eqref{eq:imp_cntrl} \\
     &\text{torque limits}~\eqref{eq:tau_lims}\\
     &\text{impact dynamics}~\eqref{eq:impact_dyn};~t = 0\\
     &\text{post-impact velocity:}~v^{+} = v;~t = 0\\
@@ -280,8 +276,7 @@ where
 \end{dmath}
 are our optimization variables and
 \begin{dmath}\label{eq:takeoff_opt_L_b}
-    L_{b} \left( W_b\right) = \ell_{v, i} +  
-     \ell_{v, f} + \int_{0}^{T_f}\,\ell_{b}(\tau)\,d\tau
+    L_{b} \left( W_b\right) = \ell_{\Delta E_k}^{I} + \int_{0}^{T_f}\,\ell_{b}(\tau)\,d\tau + \ell_{v}^F
 \end{dmath}
 is the employed cost function.
 % It should be noted that we could have inverted~\eqref{eq:impact_dyn} and obtained analytical expressions for the relationships between $v^{+} - v^{-}$ and $i$ or $\chi_{\mathrm{tip}}^{+} - \chi_{\mathrm{tip}}^{-}$ and $i$ as done in~\cite{impact_dyn::walker1994impact}, but this would require the introduction of the well-known \textit{cartesian inertia matrix} $\Lambda\,\coloneqq \left(J\,B^{-1}\,J^{T}\right)$. This in turn, would need the computation of $B^{-1}$, which would reintroduce the issues related to forward dynamics formulations~\cite{to::ferrolho2021inverse}. 

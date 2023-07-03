@@ -59,7 +59,7 @@ What's possible to improve with relatively low effort:
 - [] To address points R2.2/R11.2 on energy reg. description: we could add some details on the actual hardware used for measuring reg power and also (maybe) highlight more the references in the problem framing section. 
 - [] To address points R2.3/R11.6/R13.3/: we generate more data in sim and add it to Fig.11; easy peasy.
 - [] To address point R2.4: use jump_generation_24-02-2023-12_13_45 data to add plots of iq and reg pow tracking showing that during the takeoff we still have good tracking. This can be either added to the video (but there's no time available)
-- [] To address point R2.6: add a sentence making explicit we are using different weights for each term
+- :heavy_check_mark: To address point R2.6: add a sentence making explicit we are using different weights for each term
 - [] To address point R2.8: remove wrong title from picture (regenerate or edit them by hand)
 - [] To address point R2.9: more in depth justification of mismatches in replay results.
 - [] To address point R2.10: add convergence plots for both optimizations. How easy is it to retrieve this information from the .mat files? If not possible, is it reasonable to solve again the opt problems? 
@@ -71,3 +71,7 @@ What's possible to improve with relatively low effort:
 - [] To address R9.9: remove landing part rom video
 - [] To address R11.3: add info on optimal jump height and associated cost
 - [] To address R13.5: add explicit titles to the pictures in the videos might help
+
+Additional improvs:
+- [] Add also a link to the employed data to the article (on IIT OneDrive e.g.)
+- [] 
