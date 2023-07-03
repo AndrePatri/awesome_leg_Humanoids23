@@ -1,0 +1,888 @@
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+% The following packages can be found on http:\\www.ctan.org
+\usepackage{times}
+\usepackage{cite}
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{graphicx}
+\usepackage{epsfig} % for postscript graphics files
+\usepackage{mathptmx} % assumes new font selection scheme installed
+%\usepackage{times} % assumes new font selection scheme installed
+\usepackage{amsmath} % assumes amsmath package installed
+\usepackage{amsfonts}
+\usepackage{amssymb}  % assumes amsmath package installed
+\usepackage{bm}
+\usepackage{soul}
+% \usepackage{todonotes}
+\usepackage{url}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage[bookmarks=true]{hyperref}
+\usepackage{verbatim}
+\usepackage{color}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{listings}
+%\usepackage{siunitx}
+\usepackage[utf8]{inputenc}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\usepackage{mathtools}
+\usepackage{csquotes}
+\usepackage{breqn}
+\usepackage{cancel}
+\usepackage{xcolor}
+\usepackage{optidef}
+
+\begin{document}
+
+\section{Notes for paper submission}
+
+Recall that
+\begin{itemize}
+\item Paper submission: 1st March 2023
+\item Video submission: 5th March 2023
+\item Acceptance notification: 30th June 2023
+\item Final paper submission: 31st July 2023 
+
+\end{itemize}
+Title hints and keywords:
+\begin{itemize}
+\item[-] \enquote{brace for impact} 
+\item[-] energy recuperation/regeneration
+\item[-] impedance modulation
+\item[-] impact minimization
+\item[-] optimal impact-aware energy recovery  
+\end{itemize}
+Things to be done
+\begin{itemize}
+\item[-] debug base estimation/force estimation $\text{\rlap{}}\square$
+\item[-] recovered energy model tests (sim and test) $\text{\rlap{}}\square$
+\item[-] cartesian impedance controller $\text{\rlap{}}\square$
+\item[-] leg setup $\text{\rlap{}}\square$
+\item[-] reasonable electrical parameters $\text{\rlap{}}\square$
+\item[-] formulation of the experiment using a real time behavior tree formulation $\text{\rlap{}}\square$
+\item[-] Backup the driving reason for the paper by showing a graph of different landing configurations and difference impedance setpoints. $\text{\rlap{}}\square$
+\item[-] validate/calibrate recovered energy model $\text{\rlap{}}\square$ 
+\end{itemize}
+
+Tentative workplan:
+\begin{itemize}
+\item by 31th Gen: start outlining paper and writing.
+\end{itemize}
+\clearpage
+\section{Miscellaneous notes: momentum-based contact estimation}\label{momentum_base_estimator}
+\subsection{Mini state-of-the-art}
+Relevant literature: \cite{force_estimation::bledt2018contact}
+\cite{force_estimation::briquet2017generalized}
+\cite{force_estimation::de2008exploiting}
+\cite{force_estimation::haddadin2017robot}
+\cite{force_estimation::han2019collision}
+\cite{force_estimation::iskandar2021collision}
+\cite{force_estimation::li2021nonlinear}
+\cite{force_estimation::long2022novel}
+\cite{force_estimation::morlando2021whole}
+\cite{force_estimation::tian2016sensorless}
+\cite{force_estimation::vorndamme2017collision}
+
+\subsection{Theory}
+Floating-base dynamic model:
+\begin{equation}\label{model::floating_base_dyn}
+\begin{bmatrix}
+~B_u(q)~\\
+~B_a(q)~
+\end{bmatrix}\,a + \begin{bmatrix}
+~C_u(q, v)~\\
+~C_a(q, v)~
+\end{bmatrix}\,v + g(q) = \begin{bmatrix}
+~0_{6\times 1}~\\
+~\tau_{m}~
+\end{bmatrix} + \tau_{c} + \tau_{d}
+\end{equation}
+where
+\begin{itemize}
+\item $B_u\in\mathbb{R}^{6\times n_v}$ is the joint-space inertia matrix of the floating base.
+\item $B_a\in\mathbb{R}^{\left(n_v\,-\,6\right)\times n_v}$ is the joint-space inertia matrix of the actuated part of the dynamics.
+\item $\begin{bmatrix}
+~B_u(q)~\\
+~B_a(q)~
+\end{bmatrix}\coloneqq B(q)$, i.e. the inertia matrix of the system written in generalized coordinates.
+\item $\tau_a\,\coloneqq\,\begin{bmatrix}
+~0_{6\times 1}~\\
+~\tau_{\mathrm{m}}~ 
+\end{bmatrix}$ are the \enquote{action} torques. 
+\item $C_u\in \mathbb{R}^{(6\times n_v)}$ and $C_a\in \mathbb{R}^{\left(n_v\,-\,6\right)\times n_v}$ are, respectively, the under-actuated and actuated Coriolis matrices. 
+\item $g\in \mathbb{R}^{n_v}$ is the joint-space gravitational vector.
+\item $\tau_m\in \mathbb{R}^{\left(n_v - 6\right)\times 1}$ are the motor torques acting at the links (which can be measured employing a suitable torque sensor)
+\item $\tau_{c}\in \mathbb{R}^{n_v}$ is a vector of contact torques, due to the interaction of the robot with the environment.
+\item $\tau_{d}\in \mathbb{R}^{n_v}$ is a vector of disturbance torques, i.e. due to all those effect which are not modeled explicitly in~\eqref{model::floating_base_dyn}.
+\end{itemize}
+Suppose the robot is in contact with the environment at $n_c$ known locations. Then the dynamics can be written as
+\begin{dmath}\label{model::floating_base_with_contact}
+\begin{bmatrix}
+~B_u(q)~\\
+~B_a(q)~
+\end{bmatrix}\,a + \begin{bmatrix}
+~C_u(q, v)~\\
+~C_a(q, v)~
+\end{bmatrix}\,v + g(q) = \begin{bmatrix}
+~0_{6\times 1}~\\
+~\tau_{m}~
+\end{bmatrix} +  \sum_{i}^{n_c}\,J^{T}_{i}\,w_{c, i} + \tau_{d}
+\end{dmath}
+where $J^{T}_{i}$ and $w_{c, i}$ are, respectively, the $i$-th contact jacobian and wrench (or, equivalently, generalized force). \\
+Let's define the generalized joint-space momentum as
+\begin{equation}\label{defs::gen_momentum}
+p \coloneqq B(q)\,v
+\end{equation}
+The dynamics of~\eqref{defs::gen_momentum} is given by 
+\begin{equation}\label{model::momentum_dyn}
+\dot{p} = \dot{B}\,v + B\,a
+\end{equation}
+Substitution of the expression for $B\,a$ provided by~\eqref{model::floating_base_dyn} into~\eqref{model::momentum_dyn} gives
+\begin{equation}\label{model::momentum_dyn_raw}
+\dot{p} = \dot{B}\,v - C\,v - g + \tau_a + \tau_c + \tau_d
+\end{equation}
+It is well known that, with the proper choice of $C$ (which is not unique), the matrix $\dot{B} - 2\,C$ is skew-symmetric. This implies that
+\begin{equation}\label{model::Bdotm2C}
+\dot{B} = C + C^T
+\end{equation}
+and, hence, 
+\begin{equation}\label{model::momentum_dyn_skew}
+\dot{p} = C^T\,v - g + \tau_a + \tau_c + \tau_d
+\end{equation}
+Let us suppose we don't have disturbances; this implies $\tau_d = 0$. This is not a limiting assumption, considering that any estimated disturbance can be trivially integrated in $\tau_a$.\\
+We'd like to observe the value of $\tau_{\mathrm{c}}$. For this purpose, we build a simple first order observer
+\begin{equation}\label{model::observer_dyn}
+\dot{y} = K\,\left(\tau_c - y\right)
+\end{equation}
+where $K\in \mathbb{R}^{n_v\times n_v}$ is stable gain matrix (usually one wants a fully decoupled observer dynamics and hence chooses $K$ as a diagonal matrix of positive real-valued elements).
+Substitution of the expression for $\tau_c$ given by~\eqref{model::momentum_dyn_skew} into~\eqref{model::observer_dyn} gives
+\begin{equation}\label{model::observer_dyn_explicit}
+\dot{y} = K\,\left(\dot{p} - C^T\,v + g - \tau_a - y\right)
+\end{equation}
+Expression~\eqref{model::observer_dyn_explicit} can be integrated over a sample interval $\left[t_k,\,t_{k-1}\right]$, resulting in
+\begin{dmath}\label{model::observer_dyn_int}
+y_k - y_{k-1} = K\,\left[p_k - p_{k-1} + \int_{t_{k-1}}^{t_{k}}\left(g - C^T\,v - \tau_a\right)\,dt - \int_{t_{k-1}}^{t_{k}} y\,dt\right] 
+\end{dmath}
+which has the advantage of not needing any explicit numerical differentiation (specifically, for computing $\dot{p}$).\\
+We can then proceed to integrate numerically~\eqref{model::observer_dyn_int} to get an implementable observer law. In particular, since we can only get measurements of quantities in correspondence of the sample/control intervals, it makes sense to approximate the integrals in~\eqref{model::observer_dyn_int} with a trapezoidal integration formula, which we recall here for clarity:
+\begin{equation}\label{math::trap_num_int}
+\int_{t_{k-1}}^{t_{k}} q\,dt\approx \dfrac{q(t_k) + q(t_{k - 1})}{2}\,h
+\end{equation}
+where $h\coloneqq\left(t_{k} - t_{k-1}\right)$.
+For brevity sake, we define the operator $\mathcal{T}_{int}(q,\,h)$ as
+\begin{equation}\label{math::trap_num_int_operator}
+\mathcal{T}_{int}(q, h) = \dfrac{q(t_k) + q(t_{k - 1})}{2}\,h
+\end{equation}
+Application of~\eqref{math::trap_num_int_operator} to~\eqref{model::observer_dyn_int} gives 
+\begin{dmath}\label{model::observer_law_raw}
+	y_k - y_{k-1} = K\,\left[p_k - p_{k-1} + \mathcal{T}_{int}(g - C^T\,v - \tau_a,\,h) - \dfrac{y_k + y_{k-1}}{2}\,h \right]  
+\end{dmath}
+where the expression of the numerical integration of $y$ is made explicit.~\eqref{model::observer_law_raw} can be rearranged as
+\begin{equation}\label{model::observer_law_final}
+S_1\,y_k = S_{2}\,y_{k-1} + K\,\left[p_k-p_{k-1} + \mathcal{T}_{int}(g - C^T\,v - \tau_a,\,h)\right]
+\end{equation}
+where $S_1\coloneqq I_{n_v\times n_v} + \frac{h}{2}\,K$ and $S_2\coloneqq I_{n_v\times n_v} - \frac{h}{2}\,K$.
+Since $K$ is invertible, also $S_1$ is. Hence, the final update law  for the observer becomes
+\begin{dmath}
+y_k = S_1^{-1}\,S_{2}\,y_{k-1} + S_1^{-1}\,K\,\left[p_k-p_{k-1} + \mathcal{T}_{int}(g - C^T\,v - \tau_a,\,h)\right]
+\end{dmath} 
+A trivial choice for the gain matrix $K$ can be made using 
+\begin{equation}
+K = 2\,\pi\,f_{\mathrm{BW}} 
+\end{equation}
+where $f_{\mathrm{BW}} $ is the theoretical bandwidth of~\eqref{model::observer_dyn}. 
+
+Now that we have an available estimate for $\tau_c$, how do we retrieve each $w_{c, i}$?
+Let's rewrite~\eqref{model::floating_base_with_contact} as 
+\begin{dmath}\label{model::floating_base_with_contact}
+	\begin{bmatrix}
+		~B_u(q)~\\
+		~B_a(q)~
+	\end{bmatrix}\,a + \begin{bmatrix}
+		~C_u(q, v)~\\
+		~C_a(q, v)~
+	\end{bmatrix}\,v + g(q) = \begin{bmatrix}
+		~0_{6\times 1}~\\
+		~\tau_{m}~
+	\end{bmatrix} + J^{T}\,w_{c}
+\end{dmath}
+where $J^{T}$ is simply obtained as
+\begin{equation}\label{model::stacked_jacobian}
+J\coloneqq \left[J_0;\,\dots;\,J_{n_c} \right]
+\end{equation}
+and 
+\begin{equation}\label{model::stacked_wrenches}
+w_c\coloneqq \begin{bmatrix}
+~w_{c, 0}~\\
+\vdots\\
+~w_{c, n_c}
+\end{bmatrix}
+\end{equation}
+The contact wrench vector $w_c\in\mathbb{R}^{6\,n_c \times 1}$ can be obtained by solving the following over-constrained system of equations
+\begin{equation}\label{force_est::LSP}
+\begin{bmatrix}
+~J^T_k~\vspace{0.2cm}\\
+\Lambda_w
+\end{bmatrix}\,w_c = \begin{bmatrix}
+~y_k~\vspace{0.2cm}\\
+\Lambda_w\,\lambda
+\end{bmatrix}
+\end{equation}
+which can be synthetically written as $A\,w_c=b$.
+\eqref{force_est::LSP} is solved by
+\begin{equation}
+\hat{w}_c = A^{+}\,b
+\end{equation}
+where A is the well-known Moore-Penrose pseudoinverse of $A$.
+Here $\Lambda_w$ is a suitable weighting matrix while $\lambda$, is a regularization vector.
+This is equivalent to solve the unconstrained least-square regression problem
+\begin{equation*}
+\min_{w_c} \frac{1}{2}\,\left\| A\,w_c-b \right\|_2^2
+\end{equation*}
+or, equivalently, 
+\begin{dmath*}
+\min_{w_c} \frac{1}{2}\,\left\| J_k^T\,w_c-y_k \right\|_2^2 + \frac{1}{2}\,\left\| \Lambda_w\,\left(w_c-\lambda\right)  \right\|_2^2
+\end{dmath*}
+Suppose we are interested in estimating only a subset of the components of each contact wrench. We can exploit the structure of~\eqref{force_est::LSP} to achieve this. Specifically, we can simply set to zero the columns of $J^T_k$ associated with a particular component we don't want to estimate and also set to 0 the associated component of the regularization vector $\lambda$. This way the solver will be forced to choose a null solution for the chosen components.
+\clearpage
+
+\section{Miscellaneous notes: impact dynamics and impact measures}\label{section::impact_dynamics}
+\subsection{Mini state-of-the-art}
+Early work on impact minimisation includes~\cite{impact_dyn::walker1990use}, where
+the authors described the impact force delivered by the
+robot’s end-effector, as a function of its velocity, type of
+impact, direction of impact and manipulator posture. They rely on the modeling of contact introduced by their precursors~\cite{impact_dyn::zheng1985mathematical} (article's PDF not available). They
+use the manipulator’s redundancy to alter the posture in order
+to minimise the impact force. Impact force optimisation is
+also studied in~\cite{impact_dyn::lin1995impact}, where the authors designed a compli-
+ance controller to minimise impact and reduce post-collision
+bouncing effects.
+In \cite{impact_dyn::walker1994impact} and~\cite{impact_dyn::barcio1994impact}, the authors defined the
+impact ellipsoid of a manipulator as the variation of the end-
+effector impact force w.r.t. variations in the joint velocities. Using this
+concept, the best and worst directions at the end-effector
+level, to withstand the imposed impacts, are assessed. The
+method was validated through the use of a redundant ma-
+nipulator, to minimize the magnitude of the impact with a
+solid surface
+\cite{impact_dyn::kim2000normalized}~extended those notations and proposed new
+impact force measures related to the robot’s directional
+velocity. Furthermore,~\cite{impact_dyn::heinzmann2003quantitative} defined impact
+potential as a quantification of the maximum impact force
+a robot can exert in a collision with a stationary object.
+They implemented controllers to directly control the impact
+potential. In~\cite{impact_dyn::hu2017pre} the impact ellipsoid is expressed as a
+series of inertia quasi-ellipsoids for a space robot and object
+model, and a pre-impact configuration is designed to inflict
+minimum impact forces before grasping an object.\\
+An interesting view on the subject is provided by~\cite{impact_dyn::rossi2015pre} in the context of inelastic impact. The authors underline that the dissipation of kinetic energy during impact is what causes bone fractures and damages on body tissue. Here the parallelism between a real human and, for example, a robotic leg prototype or quadruped is appealing. Also, this is one of the few papers were the approach to impact minimization is more energy-oriented. Specifically, the authors suggest to take into account the
+amount of dissipated energy in a potential inelastic impact in
+order to assess the injury severity in a human-robot collision. The dualism impact force - kinetic energy dissipation is interesting and deserves to be addressed.\\
+In~\cite{impact_dyn::aouaj2021postimpact}, the authors focused on whether a fully rigid-body impact model can provide reliable post-impact
+velocity prediction, that can be used in the impact-aware
+robot planning, control, and perception. The experimental
+results of this approach are promising in terms of the
+prediction accuracy. They also seem to introduce the expression \enquote{impact map} to address the relationship between the pre-impact and post-impact joint velocities. Furthermore, they also show how the dynamics of impact along the normal possesses always a clear
+dominant second order response with large amplitude.
+In addition to this, they also highlight how the characteristic time scale of the impact in the case of rigid body collision is of the order of $\mathrm{ms}$.\\
+The authors of~\cite{biomech::cui2021human}, under the hypothesis that \enquote{humans favour an arm posture that maximises the value of the stiffness ellipsoid of the endpoint along the impact force direction}, search for optimal support arm configurations that maximize the dissipated kinetic energy when stopping the fall of a humanoid by exploiting a vertical wall.\\
+The authors of~\cite{impact_dyn::tassi2022impact} propose a method for hierarchical and optimal impact forces planning and pre-impact configuration optimization. Specifically they employ the impact model and the linearized version of the impact measure proposed by~\cite{impact_dyn::walker1994impact}. Both~\cite{impact_dyn::aouaj2021postimpact} and~\cite{impact_dyn::tassi2022impact} employ a frictionless restitution law(~\cite{impact_dyn::aouaj2021postimpact} employs a completely inelastic contact model), which might not be applicable to most real life scenarios (like a quadruped leg prototype jumping on the floor). In general, there will be some dissipation also along the longitudinal direction of the relative velocity, but these works (and also previous ones) do not address this issue. Notably~\cite{impact_dyn::tassi2022impact} provides an estimate for the normal coefficient of restitution for the collision pair given by their end-effector and a wooden surface. The authors of~\cite{impact_dyn::yan_bin2019batting} discuss more complex restitution models and also address the behavior on the tangential direction.
+
+\subsection{Impact dynamics modeling - nonsmooth mechanics impact maps}
+Within dynamical systems theory, nonsmooth mechanics is quite a mature theoretical framework that combines
+rigid body modeling with algebraic impact laws, with the aim
+of capturing the post-impact state of a mechanical system
+based on the ante-impact configuration and velocity. The
+essential modeling assumption within this framework is a
+space-and-time scale separation between the contact and body
+dynamics that justifies approximating the impact dynamics
+as instantaneous~\cite{impact_dyn::aouaj2021postimpact} and consequently
+allowing for instantaneous jumps in the system’s velocity and
+corresponding impulsive contact forces.
+
+Let us make the following assumptions for the impact phase:
+\begin{itemize}
+\item We are dealing with rigid bodies connected via ideal joints which, in particular, continue to behave like rigid bodies also at the moment of impact.
+\item The contact between the object and the environment (or, equivalently, another object) happens in a relatively small interval of time $\delta t \rightarrow0$, compared with the time scale of the rigid body dynamics evolution. 
+\end{itemize}
+
+Let's start with the well-known joint-space equations of motion for a rigid body system: 
+\begin{equation}\label{impact_model::rigid_body_dyn}
+B(q)\,a +C(q, v)\,v + g(q) = \tau_{a}~ + \tau_{c}
+\end{equation}
+where
+\begin{itemize}
+\item $B\in\mathbb{R}^{n_v\times n_v}$ is the generalized inertia matrix of the robot.
+\item $a=\dot{v}$.
+\item $\tau_a\,\coloneqq\,\begin{bmatrix}
+~0_{6\times 1}~\\
+~\tau_{\mathrm{m}}~ 
+\end{bmatrix}$ are the \enquote{action} torques, where $\tau_m\in \mathbb{R}^{\left(n_v - 6\right)\times 1}$ are the motor torques acting at the links (which can be measured employing a suitable torque sensor).
+\item $C\in\mathbb{R}^{n_v\times n_v}$ is the so-called Coriolis matrix. 
+\item $g\in \mathbb{R}^{n_v}$ is the joint-space gravitational vector.
+\item $\tau_{c}\in \mathbb{R}^{n_v}$ is the vector of contact torques produced by the interaction of the robot with the environment. 
+\end{itemize}
+The robot might be in contact with its surroundings at multiple locations, hence we can write 
+\begin{equation}
+\tau_c = \sum_{j}^{n_l}\,J^{T}_{j}\,w_{c, j}
+\end{equation}
+where $n_l$ is the number of links the robot is made of, $w_{c, j}$ is the resultant contact wrench acting on link $j$ and $J_j$ is the contact jacobian of the $j$-th link. Note that both $w_{c, j}$ and $J_j$ are frame-dependent and, as a consequence, they have to be specified so that they define the right mapping towards the joint state-space.\\
+We can hence rewrite the dynamics~\eqref{impact_model::rigid_body_dyn} as
+\begin{equation}\label{impact_model::rigid_body_dyn_with_cont}
+B(q)\,a +C(q, v)\,v + g(q) = \tau_{a}~ + \sum_{j}^{n_l}\,J^{T}_{j}\,w_{c, j}
+\end{equation}
+Now, during the impact the robot can be in contact at many points and experience multiple impacts at all or a subset of the active contact points. Let's define $n_i$ as the number links at which an impact is happening and suppose that this number is known somehow. 
+
+If we considerer the typical case of a floating base robot~\eqref{model::floating_base_dyn} made of serial links connected by 1 d.o.f. revolute joints, a simple strategy to detect a contact on a limb link $i$ might be to use the condition
+\begin{equation}
+\left|\tau_{m, j} - \tau_{\mathrm{cmd}, j}\right| > \mathrm{\mathrm{T}_{j}}
+\end{equation}
+where $\mathrm{T}_{j}$ is a suitable threshold and $\tau_{m, j}$ is the measured torque at the joint connecting link $j$ and link $j-1$. If the contact is detected successfully, then suitable contact estimation algorithms like the one detailed in Section~\ref{momentum_base_estimator} can be employed to get the values of the wrenches at the estimated contact locations. We can then detect the presence of an impact by checking the additional condition
+\begin{equation}
+i_j(t_{+}) \coloneqq \lim_{\delta t \rightarrow 0} \int_{0}^{\delta t} w_{c, j}(\xi)\,d\xi \approx \hat{w}_{c, j}(t_{+})\,dt = \hat{i}_j > I_j
+\end{equation} 
+where 
+\begin{itemize}
+\item $\delta t\coloneqq t_{+} - t_{-}$, with $t_{+}$ and $t_{-}$ which are, respectively, the impact and pre-impact time.
+\item $i_j$ and $\hat{i}_j$ are, respectively, the theoretical and estimated impact.
+\item $dt$ is the control sample interval.
+\end{itemize}
+With these premises, we can rewrite~\eqref{impact_model::rigid_body_dyn_with_cont} by separating the contacts due to impacts from the ones due to normal interactions with the environment:
+\begin{dmath}\label{impact_model::rigid_body_dyn_partitioned}
+B(q)\,a +C(q, v)\,v + g(q) = \tau_{a} + \sum_{j = 0}^{\left(n_l - n_i\right) - 1}\,J^{T}_{j}\,w_{c, j} + \sum_{j = \left(n_l - n_i\right)}^{n_l}\,J^{T}_{j}\,w_{c, j}
+\end{dmath}
+Now, let us integrate~\eqref{impact_model::rigid_body_dyn_partitioned} over $\delta t$:
+\begin{dmath}\label{impact_model::rigid_body_dyn_int}
+\int_{t_{-}}^{t^{+}}B(q)\,a\,d\xi + \int_{t_{-}}^{t^{+}}\left[C(q, v)\,v + g(q)\right]\,d\xi = \int_{t_{-}}^{t^{+}}\tau_{a}\,d\xi+ \sum_{j = 0}^{\left(n_l - n_i\right) - 1}\,\int_{t_{-}}^{t^{+}}J^{T}_{j}\,w_{c, j}\,d\xi + \sum_{j = \left(n_l - n_i\right)}^{n_l}\,\int_{t_{-}}^{t^{+}}J^{T}_{j}\,w_{c, j}\,d\xi
+\end{dmath}
+In the limit $\delta t \rightarrow 0$, since there's no change in the positional variables, 
+\begin{dmath}
+B(q)\,\left[v_{+} - v_{-}\right] + \cancel{\int_{t_{-}}^{t^{+}}\left[C(q, v)\,v + g(q)\right]\,d\xi} =  \cancel{\int_{t_{-}}^{t^{+}}\tau_{a}\,d\xi}+ \sum_{j = 0}^{\left(n_l - n_i\right) - 1}\, \cancel{\int_{t_{-}}^{t^{+}}J^{T}_{j}\,w_{c, j}\,d\xi} + \sum_{j = \left(n_l - n_i\right)}^{n_l}\,J^{T}_{j}\int_{t_{-}}^{t^{+}}\,w_{c, j}\,d\xi
+\end{dmath}
+Hence
+\begin{dmath}\label{impact_model::rigid_body_dyn_dt_zero}
+B(q_{+})\,\left[v_{+} - v_{-}\right] = \sum_{j = \left(n_l - n_i\right)}^{n_l}\,J^{T}_{j}\,i_j = J^T\,i
+\end{dmath}
+where 
+\begin{itemize}
+\item $q_{+} = q_{-}$, in the limit of $\delta t \rightarrow 0$.
+\item $J\in\mathbb{R}^{6\,n_i\times n_v}$ is the total impact jacobian, built by concatenating each $J_j$ row-wise.
+\item $i\in\mathbb{R}^{6\,n_i}$ is the total impact vector of the robot, built concatenating vertically each impact vector $i_J$. Note that, in the abstraction of $\delta t \rightarrow 0$, only impacts which happen exactly at the same time will contribute to~\eqref{impact_model::rigid_body_dyn_dt_zero}. In all other cases, only one impact at a time will act on the robot and the transition between them can be handled by applying~\eqref{impact_model::rigid_body_dyn_dt_zero} serially on all impacts.
+\end{itemize}
+$B$ is guaranteed to be invertible; consequently, we can write
+\begin{equation}\label{impact_model::delta_v}
+\Delta v = \left(v_{+} - v_{-}\right) = B^{-1}\,J^T\,i
+\end{equation}
+where we stress that $v$ indicates the joint-space velocity. From now on, for simplicity and without loss of generality, we will consider the case where we have a single impact point.
+The variation of the cartesian space velocities at the contact locations due to the impacts can be computed as
+\begin{equation}\label{impact_model::delta_chi}
+\Delta\dot{\chi} = J\, B^{-1}\,J^T\,i = \Lambda^{-1}\,i
+\end{equation}
+where
+\begin{itemize}
+\item $\Lambda\in\mathbb{R}^{6\times6}$ is the well-known cartesian inertia matrix.
+\item $\dot{\chi}\in\mathbb{R}^{6\times1}$ is the twist vector at the contact location, obtained by stacking up the cartesian and angular velocity vectors.
+\end{itemize}
+Note that this relationship is still valid in the case of multiple impacts. \\
+If $J$ is not rank deficient, then $\Lambda^{-1}$ is invertible and we can retrieve the impact produced by a jump of the cartesian twist vector as
+ \begin{equation}\label{impact_model::i_from_delta_chi_dot}
+i = \Lambda\,\Delta\dot{\chi}
+\end{equation}
+By substituting~\eqref{impact_model::i_from_delta_chi_dot} into~\eqref{impact_model::delta_v} we can also compute the value of the jump in joint velocities corresponding to a jump in the contact twist:
+\begin{dmath}\label{impact_model::delta_v_from_delta_chi_dot}
+\Delta v = B^{-1}\,J^T\,\Lambda\,\Delta\dot{\chi} = B^{-1}\,J^T\,{( J\, B^{-1}\,J^T)}^{-1}\,\Delta\dot{\chi}
+= {J^{-}_{w}}\,\Delta\dot{\chi}
+\end{dmath}
+where 
+\begin{equation}\label{impact_model::J_rpi}
+J^{-}_{w}\coloneqq B^{-1}\,J^T\,{( J\, B^{-1}\,J^T)}^{-1}
+\end{equation}
+which is the so-called \textit{weighted right pseudo-inverse} of $J$ (it's trivial to check that it verifies $J\,J^{-}_{w} = I$, hence the name).
+
+To complement equations~\eqref{impact_model::i_from_delta_chi_dot},~\eqref{impact_model::delta_v_from_delta_chi_dot},~\eqref{impact_model::delta_chi} we still need suitable algebraic impact transition laws. These, together with the above equation form a so-called non-smooth impact model.\\
+If we suppose two bodies in contact at a single point, we can write our restitution laws as
+\begin{equation}\label{impact_model::algebraic_impact_trans_n}
+\left(\dot{\chi}_{1}^{+}- \dot{\chi}_{2}^{+}\right)^T\cdot\hat{n}_v = - \kappa_n\,\left(\dot{\chi}_{1}^{-} - \dot{\chi}_{2}^{-}\right)^T\cdot\hat{n}_v
+\end{equation}
+for the normal component and
+\begin{equation}\label{impact_model::algebraic_impact_trans_t}
+\left(\dot{\chi}_{1}^{+}- \dot{\chi}_{2}^{+}\right)^T\cdot\hat{t}_v = \kappa_t\,\left(\dot{\chi}_{1}^{-} - \dot{\chi}_{2}^{-}\right)^T\cdot\hat{t}_v
+\end{equation}
+for the tangential component.
+Here $\kappa_{n, t}\in\left[0, 1\right]$ are restitution coefficients which control the type of collision. $\hat{n}_v$ and $\hat{t}_v$ are defined as
+\begin{equation}\label{impact_model::velocity_versors_def}
+\hat{n}_v \coloneqq
+\begin{bmatrix}
+\hat{n}\\
+0_{3\times 1}
+\end{bmatrix};\,\hat{n}_t \coloneqq
+\begin{bmatrix}
+\hat{t}\\
+0_{3\times 1}
+\end{bmatrix}
+\end{equation}
+where $\hat{n}$ and $\hat{t}$ are, respectively, the normal and tangential versors to the plane of contact between the two bodies. Specifically, $\hat{t}$ is parallel w.r.t. the projection of the relative translational velocity onto the contact plane. The notation introduced by~\eqref{impact_model::velocity_versors_def} is useful to exclude the angular velocity components from the restitution laws (this is a simplification widely adopted in literature). Alternatively, one would need to introduce suitable transition laws also for the angular components of $\dot{\chi}$.\\
+As an example, $\kappa_{n, t}=0$ indicate a purely plastic impact
+\begin{eqnarray}\label{impact_model::perf_pl_imp_n}
+\left(\dot{\chi}_{1}^{+}\right)^T\cdot\hat{n}_v =\left(\dot{\chi}_{2}^{+}\right)^T\cdot\hat{n}_v \\
+\label{impact_model::perf_pl_imp_t}
+\left(\dot{\chi}_{1}^{+}\right)^T\cdot\hat{t}_v =\left(\dot{\chi}_{2}^{+}\right)^T\cdot\hat{t}_v 
+\end{eqnarray} 
+On the contrary, $\kappa_{n, t}=1$ describe a purely elastic impact.
+
+In the case of a collision with a static environment, like for instance a floor, we can set $\dot{\chi}_{2}^{+} = 0$ into~\eqref{impact_model::algebraic_impact_trans_n} and~\eqref{impact_model::algebraic_impact_trans_t} and obtain
+\begin{eqnarray}
+\label{impact_model::imp_env_n}
+\left(\dot{\chi}_{1}^{+}\right)^T\cdot\hat{n}_v = \left(\dot{\chi}_{1}^{-} + \Delta \dot{\chi}\right)^T\cdot\hat{n}_v = - \kappa_n\,\left(\dot{\chi}_{1}^{-}\right)^T\cdot\hat{n}_v\\
+\label{impact_model::imp_env_t}
+\left(\dot{\chi}_{1}^{+}\right)^T\cdot\hat{t}_v = \left(\dot{\chi}_{1}^{-} + \Delta \dot{\chi}\right)^T\cdot\hat{t}_v = \kappa_t\,\left(\dot{\chi}_{1}^{-}\right)^T\cdot\hat{t}_v
+\end{eqnarray} 
+We can plug into~\eqref{impact_model::imp_env_n}~and \eqref{impact_model::imp_env_t} the value of $\Delta \dot{\chi}$ given by~\eqref{impact_model::delta_chi} to obtain
+\begin{eqnarray}
+ \left(\dot{\chi}_{1}^{-} + \Lambda^{-1}\,i\right)^T\cdot\hat{n}_v = - \kappa_n\,\left(\dot{\chi}_{1}^{-}\right)^T\cdot\hat{n}_v
+\\
+ \left(\dot{\chi}_{1}^{-} + \Lambda^{-1}\,i\right)^T\cdot\hat{t}_v = \kappa_t\,\left(\dot{\chi}_{1}^{-}\right)^T\cdot\hat{t}_v
+\end{eqnarray}
+which, rearranged, gives
+\begin{eqnarray}
+\label{impact_model::imp_env_n_sys_raw}
+ i^T\,\Lambda^{-1}\,\hat{n}_v = - \left(1 + k_n\right)\,\left(\dot{\chi}^{-}\right)^T\,\hat{n}_v\\
+\label{impact_model::imp_env_t_sys_raw}
+i^T\,\Lambda^{-1}\,\hat{t}_v = - \left(1 - k_t\right)\,\left(\dot{\chi}^{-}\right)^T\,\hat{t}_v
+\end{eqnarray}
+where the impact vector $i\in \mathbb{R}^{6\times 1}$ can be decomposed as~\cite{impact_dyn::yan_bin2019batting}
+\begin{equation}\label{impact_model::i_decomp}
+i = i_n\,\hat{n_v} + i_t\,\hat{t_v}
+\end{equation}
+This is equivalent to stating that the only non-null impact components are along the normal and tangential directions.\\
+Equations~\eqref{impact_model::imp_env_n_sys_raw} and~\eqref{impact_model::imp_env_t_sys_raw} can be rearranged - exploiting the symmetry of $\Lambda^{-1}$ - as
+\begin{dmath}\label{impact_model::impact_system}
+\begin{bmatrix}
+\hat{n}_v\,\Lambda^{-1}\,\hat{n}_v & \hat{n}_v\,\Lambda^{-1}\,\hat{t}_v\\ \\
+\hat{n}_v\,\Lambda^{-1}\,\hat{t}_v  &
+\hat{t}_v\,\Lambda^{-1}\,\hat{t}_v 
+\end{bmatrix}\,
+\begin{bmatrix}
+i_n\\ \\
+i_t
+\end{bmatrix} = -
+\begin{bmatrix}
+1 + k_n,\,1 - k_t
+\end{bmatrix}
+\begin{bmatrix}
+\hat{n}_v^{T}\\ \\ \hat{t}_v^{T}
+\end{bmatrix}
+\dot{\chi}^{-}
+\end{dmath}
+or, more synthetically, 
+\begin{equation}\label{impact_model::impact_system_brief}
+\Omega(q, \hat{n}, \hat{t})\,\begin{bmatrix}
+i_n\\ \\
+i_t
+\end{bmatrix} = f(\dot{\chi}^{-}, \hat{n}, \hat{t})
+\end{equation}
+Equation~\eqref{impact_model::impact_system_brief}, if $\Omega$ is non-singular, allows to solve for the impact vector, given a pre-impact velocity $\dot{\chi}^{-}$, suitable contact parameters and a known contact geometry (ultimately described by $n_v$ and $n_t$). \\
+A simple analytical solution to~\eqref{impact_model::impact_system_brief} arises by neglecting~\eqref{impact_model::algebraic_impact_trans_t} and supposing $i = i_n\,\hat{n}$. Substituting $i$ inside~\eqref{impact_model::imp_env_n} and solving for the magnitude $i_n$ gives~\cite{impact_dyn::walker1994impact}
+\begin{equation}\label{impact_model::frictionless_normal_impact}
+i_n = - \dfrac{\left(1 + k_n\right)}{\left(\hat{n}_v\,\Lambda^{-1}\,\hat{n}_v\right)}\,\hat{n}_v^T\,\dot{\chi}^{-}
+\end{equation}
+which shows that ideally we could minimize the impact by nullifying the normal component of the pre-impact velocity $\dot{\chi}^{-}$. This is not doable in practice. It is possible, however, to act on the denominator of~\eqref{impact_model::frictionless_normal_impact}, which is a configuration-dependent term. This is for example explored in~\cite{impact_dyn::walker1994impact} and in many successive works.
+
+Now, what can we think of as a reasonable measure of how intense an impact is? As we saw previously, the effect of an impact on an articulated rigid body system is to produce an instantaneous jump in the velocities of the system. It becomes hence interesting to look at the energy balance during the impact. Specifically, for the characteristics of the impact model we chose to use,  the system won't experience any variation of its potential energy. Let's look at what instead happens to kinetic energy.\\
+The variation of kinetic energy during the impact is computed as
+\begin{equation}\label{impact_model::kin_en_variation_raw}
+\Delta E_k = \dfrac{1}{2}\,{\Delta v}^T\,B\,\Delta v
+\end{equation}
+Which, in virtue of~\eqref{impact_model::delta_v} and the symmetry of $B$, can be written in terms of the impact $i$ as
+\begin{equation}\label{impact_model::kin_en_variation_i}
+\Delta E_k = \dfrac{1}{2}\,i^T\,J\,B^{-1}\,J^T\,i = \dfrac{1}{2}\,i^T\,\Lambda^{-1}\,i = \dfrac{1}{2}\,i^T\,\Delta\dot{\chi}
+\end{equation}
+This equation allows to interpret the denominator of~\eqref{impact_model::frictionless_normal_impact} as the change in kinetic energy due to the unit impulse along the contact normal $\hat{n}$. Once again, supposing $i = i_n\,\hat{n}$, we can rewrite~\eqref{impact_model::kin_en_variation_i} as
+\begin{equation}\label{impact_model::kin_en_variation_in}
+\Delta E_k = \dfrac{1}{2}\,i_n^2\,\hat{n_v}^T\,J\,B^{-1}\,J^T\,\hat{n}_v 
+\end{equation}
+If we extract $\hat{n}_v\,\Lambda^{-1}\,\hat{n}_v$ and plug it into~\eqref{impact_model::frictionless_normal_impact}, after little manipulation we get
+\begin{equation}\label{impact_model::frictionless_normal_impact_ek}
+i_n = - \dfrac{2}{\left(1 + k_n\right)\,\hat{n}_v^T\,\dot{\chi}^{-}}\,\Delta E_k
+\end{equation}
+Which shows that the higher is the dissipated kinetic energy at the impact, the higher the magnitude of the impact is. Or, the other way around, the higher the impact, the more kinetic energy is dissipated during the collision.\\
+Alternatively,~\eqref{impact_model::kin_en_variation_i} can also be written in terms of $\Delta \dot{\chi}$ as
+\begin{dmath*}\label{impact_model::kin_en_variation_chi}
+\Delta E_k = \dfrac{1}{2}\,{\Delta\dot{\chi} }^T\,{J^{-}_{w}}^T\,B\,{J^{-}_{w}}\,\Delta\dot{\chi} = 
+\dfrac{1}{2}\,{\Delta\dot{\chi} }^T\,{( J\, B^{-1}\,J^T)}^{-1}\,J\,\cancelto{I}{B^{-1}\,B}\,B^{-1}\,J^T\,{( J\, B^{-1}\,J^T)}^{-1}\,\Delta\dot{\chi} = 
+\dfrac{1}{2}\,{\Delta\dot{\chi} }^T\,\cancelto{I}{{( J\, B^{-1}\,J^T)}^{-1}\,J\,B^{-1}\,J^T}\,{( J\, B^{-1}\,J^T)}^{-1}\,\Delta\dot{\chi} = 
+\dfrac{1}{2}\,{\Delta\dot{\chi} }^T\,{( J\, B^{-1}\,J^T)}^{-1}\,\Delta\dot{\chi}
+\end{dmath*}
+which, recalling the definition of the cartesian inertia matrix, becomes
+\begin{equation}
+\Delta E_k = \dfrac{1}{2}\,{\Delta\dot{\chi} }^T\,\Lambda\,\Delta\dot{\chi}
+\end{equation}
+The above equations show that during an impact kinetic energy is not conserved in general and the more intense the impact is, the higher is variation of kinetic energy. Kinetic energy is hence dissipated into the ground and through the robot, potentially causing damages to the mechanical structure and the onboard electronics. It is therefore important to devise suitable measure capable of  capturing the intensity of the impact.\\
+\cite{impact_dyn::walker1994impact} and~\cite{impact_dyn::walker1990use} introduce two possible impact ellipsoids.
+The first one, called \textbf{dynamic impact ellipsoid} is defined on the basis of~\eqref{impact_model::delta_v} in the space of $i$ as
+\begin{equation}\label{impact_model::dynamic_imp_ellps}
+(u\in\mathbb{R}^{6}: \left\lVert{\Delta v}\right\rVert^2_2 = \,u^T\,J\,B^{-2}\,J^T\,u \leq 1)
+\end{equation}
+The ellipsoid defined by~\eqref{impact_model::dynamic_imp_ellps} is generated by the impacts $i$ that produce jumps in joint velocities of unit norm or less. This can be interpreted as a measure of the susceptibility of the robot to impulsive impact forces. 
+On the basis of this ellipsoid it is possible to define a corresponding \textbf{dynamic impact measure}:
+\begin{equation}\label{impact_model::dynamic_imp_meas}
+w_{di}\coloneqq \sqrt{\det{\left(J^{+T}\,B^2\,J^{+}\right)}} = \sigma_{1}, \dots, \sigma_{6}
+\end{equation}
+where $\sigma_i$ are the singular values of $J^{+T}\,B$.\\
+Large singular values indicate large impact forces in the corresponding direction for unit joint velocity changes. If the objective is to preserve robot's health and not the environment, large values of $w_{d1}$ are desirable.
+It is also possible to introduce another impact measure, called \textbf{generalized impact measure}, based on the ellipsoid~\eqref{impact_model::kin_en_variation_i}:
+\begin{equation}\label{impact_model::gen_dynamic_imp_meas}
+w_{di}\coloneqq \sqrt{\det{\left(J^{+T}\,B\,J^{+}\right)}} = \sigma_{1}, \dots, \sigma_{6}
+\end{equation}
+where $\sigma_i$ are the singular values of $J^{+T}\,B^{1/2}$.\\
+
+\subsection{Influence of the configuration on the impact intensity}
+From~\eqref{impact_model::frictionless_normal_impact}, in the case of vertical collisions with an horizontal flat surface, we can define an \enquote{impact severity ratio} as
+\begin{equation}\label{impact_model::impact_severity_ratio}
+\varrho \coloneqq \left|\dfrac{i_n}{\dot{\chi}^{-}_n}\right| = \dfrac{1 + k_n}{\left|\hat{n}_v\,\Lambda^{-1}\,\hat{n}_v\right|} = \dfrac{1 + k_n}{\left|\left({\Lambda^{-1}}\right)_{3, 3}\right|}
+\end{equation}
+
+This might be useful to show qualitative plots of how the landing configuration impacts this index.\\
+
+\clearpage
+
+\section{Miscellaneous notes: cartesian impedance control}\label{section::cartesian_impedance_cntrl}
+~\cite{cart_imp::hogan1984impedance}
+The approach developed here is similar (if not identical) to~\cite{cart_imp::ficuciello2015variable}.\\
+Consider the floating base rigid body dynamics given by~\eqref{model::floating_base_dyn}.\\
+Given a cartesian task $\chi(q)$, we can write
+\begin{equation}\label{cart_imp_cntrl::task_dot}
+\dot{\chi} = J\,\dot{\chi}
+\end{equation}
+where
+\begin{itemize}
+	\item $\dot{\chi}\in\mathbb{R}^{6\times 1}$
+	\item $J\in\mathbb{R}^{6\times n_v}$
+\end{itemize}
+Equation~\eqref{cart_imp_cntrl::task_dot} can be differentiated w.r.t. time to obtain
+\begin{equation}\label{cart_imp_cntrl::task_ddot}
+\ddot{\chi} = J\,a + \dot{J}\,v
+\end{equation}
+where $v\in\mathbb{R}^{n_v}$ and $a\in\mathbb{R}^{n_v}$ are, respectively, the joint space velocity and acceleration vector ($\dot{v} = a$).
+From~\eqref{model::floating_base_dyn}, being $B$ invertible, we can write the forward dynamics as
+\begin{equation}\label{model::forward_dyn}
+a = B^{-1}\,\left(J^T\,f + \tau_a + \tau_c - C\,v - g\right)
+\end{equation}
+where the meaning of each term is explained already in~\eqref{model::floating_base_dyn}. In particular, $f$ is the contact force at the cartesian control frame, while $\tau_c$ encapsulates all the other possible contact terms; for instance, if we are doing cartesian control of the base/CoM of a quadruped, $\tau_c$ will hold all the contact forces at the feet.\\
+Insertion of equation~\eqref{model::forward_dyn} into~\eqref{cart_imp_cntrl::task_ddot} gives
+\begin{equation}\label{cart_imp_cntrl::task_dyn_raw}
+\ddot{\chi} = J\,B^{-1}\,\left(J^T\,f + \tau_a + \tau_c - C\,v - g\right) + \dot{J}\,v
+\end{equation}
+After little rearranging we get
+\begin{equation}\label{cart_imp_cntrl::task_forward_dyn}
+\ddot{\chi} = J\,B^{-1}\,J^T\,f + J\,B^{-1}\,\left(\tau_a + \tau_c - g\right) +\left(\dot{J} - J\,B^{-1}\,C\right)\,v
+\end{equation}
+where we can recognize the well-known inverse of the cartesian impedance matrix $\Lambda$. If the $\Lambda$ is non-singular we can retrieve the full task inverse dynamics:
+\begin{dmath}\label{cart_imp_cntrl::task_inverse_dyn_raw}
+\Lambda\,\ddot{\chi} = f + \left(J\,B^{-1}\,J^T\right)^{-1}\,J\,B^{-1}\left(\tau_a +\tau_c - g\right) + \Lambda\,\left(\dot{J} - J\,B^{-1}\,C\right)\,v
+\end{dmath} 
+which can be rewritten more synthetically as
+\begin{dmath}\label{cart_imp_cntrl::task_inverse_dyn}
+	\Lambda\,\ddot{\chi} = f + J^{-\,T}_{w}\,\left(\tau_a +\tau_c - g\right) + \Lambda\,\left(\dot{J} - J\,B^{-1}\,C\right)\,v
+\end{dmath} 
+where $J^{-}_w$~\eqref{impact_model::J_rpi} is the so-called \textit{dynamically consistent right pseudo-inverse of $J$}. As pointed out by~\cite{cart_imp::ficuciello2015variable}, the use of~\eqref{impact_model::J_rpi} prevents the null space dynamics from affecting the end-effector behaviour. Moreover, in cases when $J$ is close to singularity, the $J^{-}_w$ can be approximated robustly using a damped version of it~\cite{num_algo::nakamura1986inverse}. The damped pseudo-inverse of $J$ is essentially equivalent to perform a least-squares regression problem with regularization. \\
+We'd like to impose the cartesian task dynamics given by 
+\begin{equation}\label{cart_imp_cntrl::desired_dyn}
+\Lambda_{ref}\,\ddot{\tilde{\chi}} + K_{D}\,\dot{\tilde{\chi}} + K_{P}\,\tilde{\chi} = f
+\end{equation}
+by employing a suitable $\tau_m$ (recall that $\tau_a\,\coloneqq\,\begin{bmatrix}
+~0_{6\times 1}~\\
+~\tau_{\mathrm{m}}~ 
+\end{bmatrix}$). Here $\tilde{\chi}$ indicates the error of the task.\\
+We extract the \enquote{command} task acceleration from~\eqref{cart_imp_cntrl::desired_dyn} as
+\begin{equation}\label{cart_imp_cntrl::desired_task_acc}
+\ddot{\chi}_{\mathrm{cmd}} = \ddot{\chi}_{ref} - \Lambda_{ref}^{-1}\,K_{P}\,\tilde{\chi} - \Lambda_{ref}^{-1}\,K_D\,\left(\dot{\chi} - \dot{\chi}_{ref}\right) + \Lambda_{ref}^{-1}\,f 
+\end{equation} 
+and plug it into~\eqref{cart_imp_cntrl::task_inverse_dyn} to obtain
+\begin{dmath}
+J^{-\,T}_{w}\,\tau_a = \Lambda\,\left[\ddot{\chi}_{ref} - \Lambda_{ref}^{-1}\,K_{P}\,\tilde{\chi} - \Lambda_{ref}^{-1}\,K_D\,\left(\dot{\chi} - \dot{\chi}_{ref}\right)\right] - \Lambda\,\left(\dot{J} - J\,B^{-1}\,C\right)\,v +  \left(\Lambda\,\Lambda_{ref}^{-1}\right - I)\,f - J^{-\,T}_{w}\,\left(\tau_c - g\right)
+\end{dmath}
+or, more synthetically,
+\begin{dmath}
+	J^{-\,T}_{w}\,\tau_a = \Lambda\,\ddot{\chi}_{*} - \Lambda\,\left(\dot{J} - J\,B^{-1}\,C\right)\,v +  \left(\Lambda\,\Lambda_{ref}^{-1}\right - I)\,f - J^{-\,T}_{w}\,\left(\tau_c - g\right)
+\end{dmath}
+where $\ddot{\chi}_{*}\coloneqq \ddot{\chi}_{ref} - \Lambda_{ref}^{-1}\,K_{P}\,\tilde{\chi} - \Lambda_{ref}^{-1}\,K_D\,\left(\dot{\chi} - \dot{\chi}_{ref}\right)$.\\
+In case we are not performing inertia shaping~\eqref{cart_imp_cntrl::task_inverse_dyn} simplifies to 
+\begin{equation}
+J^{-\,T}_{w}\,\tau_a = \Lambda\,\ddot{\chi}_{*} - \Lambda\,\left(\dot{J} - J\,B^{-1}\,C\right)\,v + J^{-\,T}_{w}\,\left(\tau_c - g\right)
+\end{equation}
+which has the advantage of not depending upon the force $f$. \\
+If we're performing acceleration-based control, we can use~\eqref{cart_imp_cntrl::desired_task_acc} as the reference command to the following QP
+\begin{subequations}\label{po}
+	\begin{dmath}
+	\min_a \lVert J\,a + \dot{J}\,v - \ddot{\chi}_{\mathrm{cmd}}\rVert^2
+	\end{dmath}
+	\begin{center}
+	subject to
+	\end{center}
+	\begin{eqnarray}
+	\text{...}
+	\end{eqnarray}
+\end{subequations} 
+If the constrained QP is solved properly, $\ddot{\chi}_{res} \approx \ddot{\chi}$, which implies that 
+\begin{dmath}\label{cart_imp_cntrl::qp_1}
+\dot{J}\,v+J\,a = \ddot{\chi}_{ref} - \Lambda_{ref}^{-1}\,K_{P}\,\tilde{\chi} - \Lambda_{ref}^{-1}\,K_D\,\left(\dot{\chi} - \dot{\chi}_{ref}\right) + \Lambda_{ref}^{-1}\,f 
+\end{dmath}
+Substituting~\eqref{model::forward_dyn} into~\eqref{cart_imp_cntrl::qp_1} we get
+\begin{dmath}
+\dot{J}\,v+J\,\left[B^{-1}\,\left(J^T\,f + \tau_a + \tau_c - C\,v - g\right)\right] = \ddot{\chi}_{ref} - \Lambda_{ref}^{-1}\,K_{P}\,\tilde{\chi} - \Lambda_{ref}^{-1}\,K_D\,\left(\dot{\chi} - \dot{\chi}_{ref}\right) + \Lambda_{ref}^{-1}\,f 
+\end{dmath}
+which is the relationship between the acceleration $a$ computed by the QP and the actuation torques $\tau_a$. \\
+If we are not performing inertia shaping, we get
+\begin{dmath}
+\dot{J}\,v+\cancel{\Lambda^{-1}\,f} + J\,\left[B^{-1}\,\left(\tau_a + \tau_c - C\,v - g\right)\right] = \ddot{\chi}_{ref} - \Lambda^{-1}\,K_{P}\,\tilde{\chi} - \Lambda^{-1}\,K_D\,\left(\dot{\chi} - \dot{\chi}_{ref}\right) + \cancel{\Lambda^{-1}\,f}
+\end{dmath}
+which shows that the actuation torques will not depend upon the value of the interaction force. This means that when computing~\eqref{cart_imp_cntrl::desired_task_acc}, we can simply set $f=0$, provided that we also neglect $f$ in the computation of the inverse dynamics.
+\clearpage
+
+\section{Miscellaneous notes: quadrature current model calibration/friction compensation}\label{section::iq_model}
+
+We start by writing the rotor-side dynamics for a single actuator as
+\begin{equation}
+\tau_m + \tau_r = J_r\,a_m
+\end{equation}
+where 
+\begin{itemize}
+	\item $\tau_m$ is the torque exerted from the stator to the rotor.
+	\item $\tau_r$ includes all the other external torques acting on the robot, in particular coming from the reducer.
+	\item $J_r$ is the rotor axial moment of inertia.
+	\item $a_m$ is the motor acceleration.
+\end{itemize}
+We can decompose $\tau_r$ into two terms:
+\begin{equation}
+\tau_r = \tau_{\mathrm{lm}} + \tau_{\mathrm{dm}}
+\end{equation}
+where 
+\begin{itemize}
+	\item $\tau_{\mathrm{lm}}$ is the measured link-side load torque, reflected to the rotor side. Note that the torque sensor (e.g. in series elastic actuators), does not measure the friction torque - if present - acting \textit{before} the elastic element which is used to perform measurements.
+	\item $\tau_{\mathrm{dm}}$ is the disturbance torque acting on the rotor. If no other effects nor model errors are present, it is possible to attribute the origin of $\tau_d$ to frictional effects; these frictional effects are produced by the reducer (if present) and possible mechanical mounting errors.
+\end{itemize}
+Specifically
+\begin{eqnarray}
+\tau_{\mathrm{lm}} = - \tau\,\eta\\ 
+\tau_{\mathrm{dm}} = \tau_{\mathrm{fm}} = \tau_{\mathrm{fl}} \, \eta \\
+\tau_{\mathrm{fl}} = \tau_{\mathrm{fl}}^{s} + \tau_{\mathrm{fl}}^{d}
+\end{eqnarray}
+and 
+\begin{eqnarray}
+\tau_{\mathrm{fl}}^{s} = - K_{s}\,\dfrac{v_l}{\lVert v_l\rVert}\\
+\tau_{\mathrm{fl}}^{d} = - K_{d}\,v_l
+\end{eqnarray}
+where
+\begin{itemize}
+	\item $\tau$ are the torques measured on the link via the torque sensor.
+	\item $\tau_{\mathrm{fm}}$ is the friction torque acting on the motor.
+	\item $K_{s}$ and $K_{d}$ are, respectively, the static and dynamic friction coefficients of a Coulomb-like model.
+	\item $v_l$ is the link velocity. Note that to have better resolution it would be better to employ the velocity measure from the motor's encoder and not the link's one.
+	\item $\eta\in \left[0, 1\right]$ is the \textit{reduction} ratio.
+\end{itemize}
+Given the torque-current characteristic of field-oriented-controlled BLDC motors, we can write
+\begin{equation}
+\tau_{m} = K_t\,i_q
+\end{equation}
+where 
+\begin{itemize}
+	\item $K_t$ is the torque constant of the motor.
+	\item $i_q$ is the quadrature current driving the phases of the BLDC motor (we assume $i_d = 0$).
+\end{itemize}
+We can therefore write the full rotor-side dynamics as
+\begin{equation}\label{friction_comp::rotor_side_dynamics}
+K_t\,i_q - \tau\,\eta - \left(K_{s}\,\dfrac{v_l}{\lVert v_l\rVert} + K_{d}\,v_l\right) \, \eta = J_r\,\dfrac{a_l}{\eta}
+\end{equation}
+where $a_l$ is the acceleration of the link.\\
+Equation~\eqref{friction_comp::rotor_side_dynamics} can be used, given measurements of $i_q$, $\tau$, $v_l$ and $a_l$, to either estimate the friction torque $\tau_{\mathrm{fm}}$ and compensate for it into higher level link-side controllers or to perform a linear regression over the unknown parameters $K_s$ and $K_d$. The knowledge of these parameters can be used as an alternative to more classical friction observers like~\cite{friction_comp::le2008friction}. For example, it is possible to set up a moving horizon regression problem which updates the values of $K_p$ and $K_d$ in real-time based on measurements available over a moving data window.\\
+Once the parameters $K_s$ and $K_d$ are estimated it is possible to estimate the $i_q$ required by the actuator for performing a given joint-space trajectory. This information can be trivially added to a given TO problem to make considerations of the actual required quadrature current, dissipated power, recovered energy~\ref{section::energy_recovery_formulation_bldc}, etc\dots .\\
+Note that, however, particular care needs to be taken into the implementation of the sign function which, thanks to the inevitable noise present during real-life experiments, can make the estimation unstable. 
+\subsection{Quadrature current model calibration/friction compensation}\label{subsection::iq_mwe}
+Implementation of a \enquote{Moving Window Estimation} for estimating the coulomb friction model in~\eqref{friction_comp::rotor_side_dynamics}.
+\clearpage
+\section{Miscellaneous notes: trade-off between impact minimization and energy recovery maximization: a discursive explanation}\label{section::impact_vs_recovery_tradeoff}
+Ideally, an actuator with zero electrical losses would be able to send back to the battery the whole mechanical energy which is produced while breaking the robot. In practice, however, there will always be some kind of resistive losses in the circuitry. These losses are proportional to the square of the current(quadrature?). The value of the current is proportional to the torque required at the motor side. Since breaking the robot in a short amount of time requires high decelerations, hence high torques, it will generate spikes in the quadrature current and $\mathrm{spikes}^2$ in the dissipated energy. This means that to maximize the recovered energy you need to minimize losses and to minimize losses you need to go slow. If you go slow during breaking, you travel long. Hence, maximizing the recovered energy is equivalent to maximize the distance traveled by the joints.\\
+This is is opposition with the need of minimizing the impact force which, given an impact velocity, will require \enquote{braced} configurations with little travel available (see Section~\ref{section::impact_dynamics}).\\
+This means that a configuration optimized for impact minimization will - maybe surprisingly - perform poorly for recovering energy; here the possible surprise of the reader due to the apparent paradox given by the fact that minimizing impact amounts to maximizing the post-impact kinetic energy available for recovery. The crucial point is that this kinetic energy cannot however be recovered if the available travel is too little, since we intuitively know that braking instantly will dissipate all the available energy into the resistors.
+\section{Miscellaneous notes: bio-mechanical parallel}\label{section::energy_recovery_biomech}
+The trade-off between the minimization of the impact during landing (or, equivalently, the maximization of the available post-impact kinetic energy) and the maximization of the regenerated energy highlighted in Section~\ref{section::impact_vs_recovery_tradeoff} has a complete equivalent when considering landing postures in humans and anymals. When performing a landing, we do not make contact with straight legs, since it would maximize the impact transmitted to our joints. Instead, we choose a suitable \enquote{braced} configuration. However, there is a limit as to how much we brace our legs. From the theory of impact dynamics, we know that a completely braced configuration would minimize the impact force. However, the more a configuration is braced, the higher are the torques required to break in a finite amount of time without reaching joint limits. Also, a braced configuration will leave little if no travel for tendons to elongate and store potential energy. As a consequence, if we where to land which a completely braced configuration - which effectively minimizes the impact force - we would either fail to brake and eventually fall or have to brake in a short amount of time and with little tendons elongation. This means that our muscles would have to exert large joint torques in a short amount of time; since there was no potential energy stored in the tendons, all the available kinetic energy will then be lost in muscle heat.\\
+The authors of~\cite{} show that in legged locomotion there are periods in each stride in which the leg does negative work. This principle is exploited during energy regeneration experiments by the authors of~\cite{reg_braking::seok2014design}\clearpage
+
+\section{Miscellaneous notes: FoC of BLDC actuators}\label{section::bldc_foc}
+~\cite{foc::krause2013analysis}
+Dynamics equations (stator-side):
+\begin{equation}
+v_{\mathrm{abc}} = R_{\mathrm{abc}}\,i_{\mathrm{abc}} + \dfrac{d}{dt}\,\left(\lambda_{\mathrm{abc}}\right)
+\end{equation}
+where
+\begin{itemize}
+	\item \begin{equation}
+	\lambda_{\mathrm{abc}} = \lambda_{\mathrm{abc},\,s} + \lambda_{\mathrm{abc},\,r}
+	\end{equation} 
+	\item $v_{\mathrm{abc}}$ are the driving voltages coming from the PWM stage (referenced to the center of the stella-connected phases).
+	\item $R_{\mathrm{abc}}$ is a diagonal matrix of phase resistances (ideally, all equal). 
+\end{itemize}
+Here $\lambda_{\mathrm{abc, s}}$ is the magnetic flux contribution coming from the stator windings, while $\lambda_{\mathrm{abc, r}}$ is the rotor contribution (for PM machines is the flux of the rotor's magnet). 
+We can assume 
+\begin{equation}
+\lambda_{\mathrm{abc}} = L_{\mathrm{abc}}\,i_{\mathrm{abc}} + \lambda_{\mathrm{abc, PM}}
+\end{equation}
+
+\begin{eqnarray}
+R_{\mathrm{abc}} =
+\begin{bmatrix}
+R & 0 & 0\\
+0 & R & 0\\
+0 & 0 & R
+\end{bmatrix}\\
+L_{\mathrm{abc}} =
+\begin{bmatrix}
+L & M & M\\
+M & L & M\\
+M & M & L
+\end{bmatrix}\,
+\end{eqnarray}
+For a magnetically linear system~\cite{foc::krause2013analysis}, 
+\begin{eqnarray}
+L = L_{\mathrm{l, s}} + L_{\mathrm{m, s}}\\
+M = -\dfrac{1}{2}\,L_{\mathrm{m, s}}
+\end{eqnarray}
+We can therefore write a power balance on the stator as
+\begin{dmath}\label{foc::power_bal_abc}
+p_{\mathrm{abc}}^{\mathrm{pwm}} = i_{\mathrm{abc}}^T\,v_{\mathrm{abc}} = i_{\mathrm{abc}}^T\,R_{\mathrm{abc}}\,i_{\mathrm{abc}} + i_{\mathrm{abc}}^T\,\dfrac{d}{dt}\,\left[L_{\mathrm{abc}}\left(\theta_e\right)\,i_{\mathrm{abc}}(t) + \lambda_{\mathrm{abc, PM}}\left(\theta_e\right)\right]
+\end{dmath}
+with 
+\begin{itemize}
+	\item $\theta_e = n_p\,\theta_r$, where $n_p$ is the number of stator poles.
+	\item $p_{\mathrm{abc}}^{\mathrm{pwm}}$ is the power delivered from the PWM stage to the stator windings.
+\end{itemize}
+We can write~\eqref{foc::power_bal_abc} in the $qd0$ reference frame using the Park transformation~\cite{foc::krause2013analysis} (constant amplitude) as
+\begin{dmath}\label{foc::power_bal_qd0}
+	p_{\mathrm{abc}}^{\mathrm{pwm}} = p_{\mathrm{qd0}}^{\mathrm{pwm}} = \dfrac{3}{2}\,i_{qd0}^T\,v_{qd0}= \dfrac{3}{2}\,\left(i_{qd0}^T\,R_{qd0}\,i_{qd0} + i_{qd0}^T\,\dfrac{d}{dt}\lambda_{qd0} + i_{qd0}^T\,\omega_e\,\lambda_{qd0}\right)
+\end{dmath}
+with
+\begin{equation}
+\lambda_{\mathrm{qd0}}(t) = \lambda_{\mathrm{qd0, PM}} + L_{\mathrm{qd0}}\,i_{\mathrm{qd0}}(t) 
+\end{equation}
+\begin{equation}
+L_{\mathrm{qd0}} =
+\begin{bmatrix}
+L_q & 0 & 0\\
+0 & L_d & 0\\
+0 & 0 & L_0
+\end{bmatrix}\\
+\end{equation}
+\begin{eqnarray}
+&L_q = L_l + \dfrac{3}{2}\,L_{m} = L_d\\
+&L_0 = L_l
+\end{eqnarray}
+\begin{equation}
+\lambda_{\mathrm{qd0, PM}} =
+\begin{bmatrix}
+0\\
+\lambda_{PM}\\
+0
+\end{bmatrix}
+\end{equation}
+\begin{equation}
+R_{\mathrm{qd0}} = K_{\mathrm{qd0}}\,R\,K_{\mathrm{qd0}}^{-1}
+\end{equation}
+with
+\begin{dmath}
+K_{\mathrm{qd0}} =\dfrac{2}{3}\,\begin{bmatrix}
+\cos{\omega_e\,t} & \cos{\left(\omega_e\,t - \dfrac{2}{3}\,\pi\right)} & \cos{\left(\omega_e\,t + \dfrac{2}{3}\,\pi\right)}\\
+\sin{\omega_e\,t} & \sin{\left(\omega_e\,t - \dfrac{2}{3}\,\pi\right)} & \sin{\left(\omega_e\,t + \dfrac{2}{3}\,\pi\right)}\\
+\dfrac{1}{2} & \dfrac{1}{2} & \dfrac{1}{2}
+\end{bmatrix}
+\end{dmath}
+We can rewrite/simplify~\eqref{foc::power_bal_qd0} in case of $i_d = 0$ as
+\begin{dmath}\label{foc::power_bal_final}
+	p_{\mathrm{pwm}} = \dfrac{3}{2}\,\left(R_{q}\,i_{q}^2 + L_q\,i_{q}\,\dfrac{d}{dt}\,i_q\,\right) + K_t\,i_q\,\omega_r
+\end{dmath}
+where usually $L_q$, if neglecting leakage inductance, is of the order of the $\mu\mathrm{H}$.\\
+We can proceed to integrate~\eqref{foc::power_bal_final} over a finite interval of time $\left[t_0,\,t_k\right]$ to obtain the energy exchanged with the power bus as
+\begin{dmath}\label{foc::energy_balance_stat_side}
+e(t_k) = e(t_0) + \dfrac{3}{2}\,\int_{t_0}^{t_k}\,R_{q}\,i_{q}^2\,d\tau\,+ \dfrac{3}{2}\,\int_{t_0}^{t_k}\,L_q\,i_{q}\,\dfrac{d}{dt}\,i_q\,d\tau\,+\,\int_{t_0}^{t_k}\,K_t\,i_q\,\omega_r\,d\tau = e(t_0) + \dfrac{3}{2}\,\int_{t_0}^{t_k}\,R_{q}\,i_{q}^2\,d\tau\,+ \dfrac{3}{4}\,L_q\,\left[i_q^2(t_k) - i_q^2(t_0)\right]\,+\,\int_{t_0}^{t_k}\,K_t\,i_q\,\omega_r\,d\tau
+\end{dmath}
+If we neglect the losses on the PWM power bus, we can approximately state that
+\begin{equation}
+p_{\mathrm{pwm}} \approx - p_{\mathrm{batt}}
+\end{equation} 
+which integrated over $\left[t_0,\,t_k\right]$ gives
+\begin{equation}
+e(t_k) - e(t_0) \approx e_{\mathrm{batt}}(t_0) - e_{\mathrm{batt}}(t_k)
+\end{equation}
+where $p_{\mathrm{batt}}$ is the power entering the battery. \\
+Rewriting~\eqref{foc::energy_balance_stat_side} gives
+\begin{dmath}\label{foc::energy_balance_batt_side}
+	e_{\mathrm{batt}}(t_k) = e_{\mathrm{batt}}(t_0)- \dfrac{3}{2}\,R_{q}\,\int_{t_0}^{t_k}\,i_{q}^2\,d\tau\,- \dfrac{3}{4}\,L_q\,\left[i_q^2(t_k) - i_q^2(t_0)\right]\,-\,K_t\,\int_{t_0}^{t_k}\,i_q\,\omega_{r}\,d\tau
+\end{dmath}
+which show that the energy stored in the battery is drained by the resistive losses. The conservative inductive term, supposing to start and end the integration from a rest configuration, is null. In this case we see that during braking ($i_q\,\omega_r \leq 0$), mechanical energy is pumped back into the battery, while resistor concurrently drain it. The inductive term, being conservative, is only a temporary energy storage.
+\section{Miscellaneous notes: energy recovery working principles for BLDC-based actuators}\label{section::energy_recovery_formulation_bldc}
+An intuitive explanation applied to a unidirectional DC motor is available at  \href{https://electronics.stackexchange.com/questions/56186/how-can-i-implement-regenerative-braking-of-a-dc-motor}{\color{blue} regenerative-braking-dc \color{black}}.\\
+Considerations and experiments of energy recovery with quasi-direct-drive BLDC actuators are performed on a prototype of the MIT Cheetah robot~\cite{reg_braking::seok2014design}. Specifically, the authors perform an experiment in which the robot is commanded a fixed virtual impedance set-point at the tip of the legs and then released from a given height. The measurements show that the battery is effectively recharged during landing.
+\clearpage
+\section{Miscellaneous notes: takeoff optimization}\label{section::takeoff_opt_formulation}
+The objective of the takeoff optimization is to maximize, given the limitations of the hardware, the reached jump height at the apex. \\
+To do so, we first solve a TO problem with fixed number of nodes and variable $dt$ for the contact and flight phases.
+\clearpage
+\section{Miscellaneous notes: post-impact optimization}\label{section::post_impact_opt_formulation}
+ 
+Let us look at how to formulate the post-impact optimization in an efficient way.\\
+First of all, we enforce the equation of motion using the inverse dynamics, instead of employing the forward one. This has some well-known advantages, one above the others being that the former shows \enquote{robustness to coarser
+discretizations, both in terms of computation efficiency and
+faithfulness of solutions with respect to finer discretizations}~\cite{to::ferrolho2021inverse}.\\
+What do we optimize for?
+Looking at the theory of impact dynamics described in~\ref{section::impact_dynamics}, we know that we can optimize for a suitable \enquote{braced} configuration at touchdown (for instance, by employing~\eqref{impact_model::impact_severity_ratio}). From now on, we will refer to the optimal landing configuration as $q^{*}$.\\
+Looking at (...insert a couple of beautiful graphs to show the characteristics of the impact optimization...), we see that configurations optimized for landing will tend to be braced.\\
+From the model~\eqref{foc::power_bal_final} it is clear that the amount of recoverable energy is largely determined by the amount joule losses. To maximize the recovered energy during braking, we need to keep the currents low or, equivalently, the torques. If we land with a super braced configuration, no matter what controller is employed, we have little travel before reaching the joint limits and hence, the actuator needs to produce, on average, high torques; these require high currents. As a consequence, we expect to dissipate most of our energy into heat. We can therefore conclude that the landing configuration has to play a crucial role in the amount of recovered energy. \\
+Suppose a given landing configuration and pre-impact kinetic energy. These two parameters will determine the amount of energy which is available for recovery. Given a residual kinetic energy level, we then ask ourselves \enquote{what is the optimal control so that we maximize the recovered energy into the battery?}\\
+We claim that anymals and, in particular, human land with 
+
+To generate the kinetic energy that is used in the energy recovery phase, we choose to employ an optimal jumping trajectory. 
+\subsection{Impact mitigation}\label{subsection::impact_minimization}
+We already saw that minimizing the impact is equivalent to minimizing the dissipated kinetic energy during the touchdown. As a consequence, we would like to minimize~\eqref{impact_model::kin_en_variation_i}. One way to do it, under some simplifications, is for instance to minimize the index defined by~\eqref{impact_model::impact_severity_ratio}. This would require the computation of $\Lambda$ and, hence, $B^{-1}$, which would basically reintroduce the issues of using a forward dynamics formulation.\\
+To avoid this, given a known pre-impact cartesian velocity $\dot{\chi}^{-}$, we can formulate the problem in a KKT fashion as
+\begin{subequations}\label{postimp_opt::min_delta_ek}
+	\begin{dmath}
+		q^{*} =\max_{q}\,\Delta E_k(\dot{\chi}^{-}, \,q,\,\Delta\,\dot{\chi},\,i,\,\Delta\,v) = \max_{q}\,\dfrac{1}{2}\,{\Delta v}^T\,B\,\Delta v =  \max_{q}\,\dfrac{1}{2}\,i^T\,\Delta\,\dot{\chi}
+	\end{dmath}
+	\centering\text{subject to}
+	\begin{eqnarray}
+	\label{postimp_opt::min_delta_ek::restitution_law}
+	\Delta\,\dot{\chi}^T\,\hat{n}_v = - \left(1 + k_n\right)\,{\left(\dot{\chi}^{-}\right)}^T\,\hat{n}_v \\
+	\label{postimp_opt::min_delta_ek::forward_kin}
+	\Delta\,\dot{\chi} = J(q)\,\Delta\,{v}\\
+	\label{postimp_opt::min_delta_ek::impact_dyn}
+	B(q)\,\Delta\,v = J^T(q)\,i
+	\end{eqnarray}
+\end{subequations} 
+
+Hence, with the introduction of the additional variables $\Delta\,\dot{\chi},\,i,\,\Delta\,v$ we avoid numerical issues and also get for free all the impact-relevant quantities.\\
+
+\subsection{Post-impact impedance optimization}\label{subsection::postimp_opt}
+\clearpage
+
+\section{Miscellaneous notes: rt behavior tree for experimental validation}\label{section::rt_bt}
+The experiment for validating the recovered energy optimization can be carried out implementing it in a real-time behavior tree exploiting BehaviorTreeCpp library~\cite{misc::colledanchise2021implementation}.\\
+We place the tree in a XBot2 real-time plugin and tick it manually at each control instant.\\
+Leaf nodes of the tree communicate with the underlying plugins via the inter-plugin communication system.
+
+\clearpage
+\bibliographystyle{ieeetr}
+\bibliography{bibliography/cartesian_imp,bibliography/impact_dyn,bibliography/rigid_body_algo,bibliography/joint_friction_estimation,bibliography/force_estimation,bibliography/misc,bibliography/biomechanical_refs,bibliography/regenerative_braking,bibliography/foc_cntrl_bldc}
+\end{document}
