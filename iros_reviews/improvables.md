@@ -53,7 +53,7 @@ R13:
 - 2) :x: the reviewer wonders if the use of better models allow to achieve better apex wrt some lit. references like agile_bots::ding2017design, agile_bots::shen2020optimized and agile_bots::chignoli2021online (most of these papers use relatively light platforms, expecially the first two. Our leg is instead quite heavy: 12 Kg.)
 - 3) :heavy_check_mark: more baselines in the reg energy result figure (already the second reviewer to point this out)
 - 4) :x: knee reversion might not be feasible in pratice when considering an actual robot (might be true, however not really an issue in the context of the paper)
-- 5) :heavy_check_mark:video: at about 42sec plots are confusing due to "lacking legend" (adding explicit title with "regenerated energy" and "regenerative power" might help on this)
+- 5) :heavy_check_mark: video: at about 42sec plots are confusing due to "lacking legend" (adding explicit title with "regenerated energy" and "regenerative power" might help on this)
 
 What's possible to improve with relatively low effort: 
 - [] To address points R2.2/R11.2 on energy reg. description: we could add some details on the actual hardware used for measuring reg power and also (maybe) highlight more the references in the problem framing section. 
@@ -63,7 +63,7 @@ What's possible to improve with relatively low effort:
 - [] To address point R2.8: remove wrong title from picture (regenerate or edit them by hand)
 - [] To address point R2.9: more in depth justification of mismatches in replay results.
 - [] To address point R2.10: add convergence plots for both optimizations. How easy is it to retrieve this information from the .mat files? If not possible, is it reasonable to solve again the opt problems? 
-- [] To address point R2.11: we could argue that, even is on a single jump the regenerative power is comparatively small wrt the takeoff, over multiple execution can become relevant
+- [] To address point R2a.11: we could argue that, even is on a single jump the regenerative power is comparatively small wrt the takeoff, over multiple execution can become relevant
 - [] To address point R3.1: remove claims of heavy duty quadruped development as a driving reason. This probably removes the temptation for the reviewer to underline the difficulties in generalizing to whole robots. This concerns can be highlighted however in the conclusions and future work section.
 - [] To address R6.2/.3: this is possible, but do we want to do it really? 
 - [] To address R6.5: we have to highlight that not all configurations good for landing are best for energy regeneration more
@@ -72,6 +72,7 @@ What's possible to improve with relatively low effort:
 - [] To address R11.3: add info on optimal jump height and associated cost
 - [] To address R13.5: add explicit titles to the pictures in the videos might help
 
-Additional improvs:
+Additional improvs:make
 - [] Add also a link to the employed data to the article (on IIT OneDrive e.g.)
-- [] 
+- [] :heavy_check_mark: Improve TO problem formulation description
+- [] add extensive README.md file to humanoids submission branch  
