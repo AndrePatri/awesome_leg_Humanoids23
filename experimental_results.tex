@@ -18,14 +18,14 @@ The solution of~\eqref{eq::braking_opt_prb} took a total of $856$ iterations bef
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/hardware_saturation_opt.pdf}
-    \caption{Joint velocites, quadrature currents and joint efforts computed by the take-off trajectory optimization problem.}
+    \caption{Joint velocites, quadrature currents and joint efforts and jump height obtained from the refined take-off trajectory optimization problem. The limits for the quadrature current of $50~\mathrm{A}$ (for safety lower than the maximum peak $i_q$ of $62~\mathrm{A}$ which the control boards can tolerate) are saturated. The peak torque limits of $120~\mathrm{N\,m}$ as well as the maximum link-side velocity of $20~\mathrm{rad/s}$, on the contrary, are not saturated.}
     \label{fig:takeoff_opt_data}
 \end{figure}
 
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/hardware_saturation.pdf}
-    \caption{Data collected during the execution of the refined optimal take-off trajectory on the real robot, which show good agreement with the nominal optimized data shown in Fig.~\ref{fig:takeoff_opt_data}.}
+    \caption{Data collected during the execution of the refined optimal take-off trajectory on the real robot. On top, a validation of the $i_q$ model (shown on the hip joint) during the take-off, which shows its accuracy also for highly dynamic motions. At the bottom, the measured currents (left half) and torques (right half), in line with the computed values shown in~Fig.~\ref{fig:takeoff_opt_data}}
     \label{fig:takeoff_execution}
 \end{figure}
 
