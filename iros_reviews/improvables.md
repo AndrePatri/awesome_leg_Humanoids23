@@ -76,4 +76,5 @@ Additional improvs:make
 - :heavy_check_mark: Add also a link to the employed data to the article (on IIT OneDrive e.g.)
 - :heavy_check_mark: Improve and clean TO problem formulation description
 - [] Improve takeoff replay plots and their description
+- [] Explicitly mention challenges into extending this to a full robot at least in the conclusion
 - [] add extensive README.md file to humanoids submission branch  
