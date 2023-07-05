@@ -60,9 +60,9 @@ What's possible to improve with relatively low effort:
 - [] To address points R2.3/R11.6/R13.3/: we generate more data in sim and add it to Fig.11; easy peasy.
 - [] To address point R2.4: use jump_generation_24-02-2023-12_13_45 data to add plots of iq and reg pow tracking showing that during the takeoff we still have good tracking. This can be either added to the video (but there's no time available)
 - :heavy_check_mark: To address point R2.6: add a sentence making explicit we are using different weights for each term
-- [] To address point R2.8: remove wrong title from picture (regenerate or edit them by hand)
+- :heavy_check_mark: To address point R2.8: remove wrong title from picture (regenerate or edit them by hand)
 - [] To address point R2.9: more in depth justification of mismatches in replay results.
-- [] To address point R2.10: add convergence plots for both optimizations. How easy is it to retrieve this information from the .mat files? If not possible, is it reasonable to solve again the opt problems? 
+- [] To address point R2.10: add convergence plots for both optimizations. How easy is it to retrieve this information from the .mat files? If not possible, is it reasonable to solve again the opt problems?
 - [] To address point R2a.11: we could argue that, even is on a single jump the regenerative power is comparatively small wrt the takeoff, over multiple execution can become relevant
 - [] To address point R3.1: remove claims of heavy duty quadruped development as a driving reason. This probably removes the temptation for the reviewer to underline the difficulties in generalizing to whole robots. This concerns can be highlighted however in the conclusions and future work section.
 - [] To address R6.2/.3: this is possible, but do we want to do it really? 
