@@ -73,6 +73,7 @@ What's possible to improve with relatively low effort:
 - [] To address R13.5: add explicit titles to the pictures in the videos might help
 
 Additional improvs:make
-- [] Add also a link to the employed data to the article (on IIT OneDrive e.g.)
-- [] :heavy_check_mark: Improve TO problem formulation description
+- :heavy_check_mark: Add also a link to the employed data to the article (on IIT OneDrive e.g.)
+- :heavy_check_mark: Improve and clean TO problem formulation description
+- [] Improve takeoff replay plots and their description
 - [] add extensive README.md file to humanoids submission branch  
