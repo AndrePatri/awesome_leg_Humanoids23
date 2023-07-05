@@ -127,7 +127,7 @@ As an additional remark, the authors would like to underline the importance of t
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/inv_dyn_caveat.pdf}
-    \caption{Joint accelerations (on top) and normal component of the ground reaction force obtained for a refined take-off problem without jerk and yank minimization: the solver exploits a caveat in the inverse dynamics formulation and finds a solution which is not feasible in reality.}
+    \caption{Joint accelerations (on top) and normal component of the ground reaction force obtained for a refined take-off problem without jerk and yank minimization: the solver exploits a caveat in the inverse dynamics formulation and finds a solution which respects node constraints, but is not feasible in reality.}
     \label{fig:inv_dyn_caveat}
 \end{figure}
 Fig.~\ref{fig:inv_dyn_caveat} shows the results of a refined solution where the regularization costs on the jerk $\ddot{v}$ and the yank $\dot{f}$ are not employed. Looking at the picture, the solver exploits a caveat in the inverse dynamics-based formulation and produces an impulse of $f$ at the takeoff-instant without violating the inverse dynamics on the nodes. It does so by compensating with corresponding impulses of $\dot{v}$. This acceleration and ground reaction forces are however not feasible in reality, and this could be checked by looking at the dynamics residuals obtained by re-sampling the refined trajectory at a higher rate. This shows how with the inverse dynamics-based formulation applied to highly dynamic TO needs to be complemented with suitable regularization of the jerk $\dot{v}$ and $\dot{f}$ to function properly.
