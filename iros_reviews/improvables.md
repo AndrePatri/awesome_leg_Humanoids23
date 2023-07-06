@@ -58,7 +58,7 @@ R13:
 What's possible to improve with relatively low effort: 
 - :x: To address points R2.2/R11.2 on energy reg. description: we could add some details on the actual hardware used for measuring reg power and also (maybe) highlight more the references in the problem framing section. 
 - :heavy_check_mark: To address points R2.3/R11.6/R13.3/: we generate more data in sim and add it to Fig.11; easy peasy.
-- :heavy_check_mark: To address point R2.4: use jump_generation_24-02-2023-12_13_45 data to add plots of iq and reg pow tracking showing that during the takeoff we still have good tracking. This can be either added to the video (but there's no time available)
+- :heavy_check_mark: To address point R2.4: use jump_generation_06-07-2023-14_24_01 data to add plots of iq and reg pow tracking showing that during the takeoff we still have good tracking. This can be either added to the video (but there's no time available)
 - :heavy_check_mark: To address point R2.6: add a sentence making explicit we are using different weights for each term
 - :heavy_check_mark: To address point R2.8: remove wrong title from picture (regenerate or edit them by hand)
 - :heavy_check_mark: To address point R2.9: more in depth justification of mismatches in replay results. At the end, I simply changed the figure to induce less confusion.
@@ -77,6 +77,8 @@ Additional improvs:make
 - :heavy_check_mark: Improve and clean TO problem formulation description
 - :heavy_check_mark: Substitute real traj replay plots with images of iq tracking during the jump and boxplots of iq and efforts 
 - :heavy_check_mark: Improve takeoff replay plots and their description
+- :heavy_check_mark: allow for total reproducibility of results
 - [] Explicitly mention challenges into extending this to a full robot at least in the conclusion. No space!! Where and how? 
 - [] Possibly re-execute at least a takeoff on prototype and possibly also some recuperation tests (results improvements).
 - :heavy_check_mark: add README.md file to humanoids submission branch  
+- :heavy_check_mark: Run again optimizations with added convergence plots (modify horizon to log also this data). Update processor info - add solver info - etc....
