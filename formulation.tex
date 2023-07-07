@@ -224,7 +224,9 @@ e_{\mathrm{batt}}(t) = e_{\mathrm{batt}}(t_0)- \dfrac{3}{2}\,R\,\int_{t_0}^{t}\,
 \end{dmath}
 Inside~\eqref{eq:energy_flow} we can distinguish, in this order, the initial energy level of the battery, the dissipative joule losses, a conservative term representing the energy stored inside the motor phases and the mechanical energy at the motor rotor. For our purposes, the inductive term in~\eqref{eq:energy_flow}, which is conservative and also weighted by $L_q$ (usually in the order of $\mu\,\mathrm{H}$), can be neglected. 
 
-Figures~\ref{fig:fixed_imp_reg_energy} and~\ref{fig:fixed_conf_reg_energy} report data from two series of dropdown tests performed in simulation while monitoring the energy flow with~\eqref{eq:energy_flow}. The leg, while being controlled by a joint-space impedance control, is dropped from an height on $0.5\mathrm{m}$ multiple times with different configurations and different joint impedance setpoints. After each touchdown, the energy recovered is evaluated using~\eqref{eq:energy_flow}. The results show that not all low-impact configurations are suitable for energy regeneration and that the amount of recovered energy is indeed also influenced greatly by the employed joint impedance setpoints. 
+Figures~\ref{fig:fixed_imp_reg_energy} and~\ref{fig:fixed_conf_reg_energy} report data from two series of dropdown tests performed in simulation while monitoring the energy flow with~\eqref{eq:energy_flow}. 
+%The leg, while being controlled by a joint-space impedance control, is dropped from an height on $0.5\mathrm{m}$ multiple times with different configurations and different joint impedance setpoints. 
+After each touchdown, the energy recovered is evaluated using~\eqref{eq:energy_flow}. The results show that not all low-impact configurations are suitable for energy regeneration and that the amount of recovered energy is indeed also influenced greatly by the employed joint impedance setpoints. 
 \begin{figure}
     \centering
     \includegraphics[width=1.0\columnwidth]{images/reg_pow_tracking.pdf}
