@@ -78,7 +78,7 @@ Additional improvs:make
 - :heavy_check_mark: Substitute real traj replay plots with images of iq tracking during the jump and boxplots of iq and efforts 
 - :heavy_check_mark: Improve takeoff replay plots and their description
 - :heavy_check_mark: allow for total reproducibility of results
-- [] Explicitly mention challenges into extending this to a full robot at least in the conclusion. No space!! Where and how? 
-- [] Possibly re-execute at least a takeoff on prototype and possibly also some recuperation tests (results improvements).
+- :heavy_check_mark: Explicitly mention challenges into extending this to a full robot at least in the conclusion. 
+- [] Possibly re-execute at least a takeoff on prototype and possibly also some recuperation tests (results improvements). Given the space, these new results can be added to the online data repo.
 - :heavy_check_mark: add README.md file to humanoids submission branch  
 - :heavy_check_mark: Run again optimizations with added convergence plots (modify horizon to log also this data). Update processor info - add solver info - [] Improve landing opt and energy reg cost
