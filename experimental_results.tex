@@ -4,7 +4,7 @@ The obtained optimal results are then tested both in simulation and on the real 
 Our leg prototype is based on a 2 DOF
 leg prototype the joints of which are actuated by BLDC motor drives with 50:1 gear ratio. The power setup of the
 leg makes use of a 25Ah (100A peak discharge current), 51.2V nominal voltage battery unit and the energy flow from and to the battery is measured through a dedicated data acquisition system that monitors the power bus voltage and current levels.
-Convergence plots and additional information on the results are made available at~\cite{url::awesome_leg_repo}.
+%Convergence plots and additional information on the results are provided in the accompanying video.
 \subsection{Take-off generation}
 The optimal take-off trajectory is generated solving the TO problem~\eqref{eq::takeoff_opt_prb} with the pipeline described in Sec.~\ref{subsec:takeoff_opt}: first a coarse problem made of $100$ nodes is solved, then the obtained solution is re-sampled~\cite{to::horizon_to} at  $1\mathrm{KHz}$ (corresponding to $917$ nodes for the optimal phase durations found solving~\eqref{eq::takeoff_opt_prb}) and then refined with the same rate and number of nodes, so that a dynamically feasible trajectory is found. The solution of~\eqref{eq::takeoff_opt_prb} is found in $79$ iterations for the coarse initial problem and in $48$ iterations for the refined one. 
 Figure~\ref{fig:takeoff_opt_data} shows part of the take-off TO solution and highlights how our formulation is able to fully exploit the performance of the hardware, while staying inside its limits. 
