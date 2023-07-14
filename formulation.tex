@@ -202,13 +202,13 @@ Exploiting the simplicity of~\eqref{eq:impact_ratio}, we can have a quantitative
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/dropdown_const_imp.pdf}
-    \caption{Results of the dropdown tests performed in simulation, with fixed joint impedance. The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5\mathrm{m}$ multiple times with 6 different touchdown configurations chosen manually on the curve~\ref{fig:impact_ratio} (the same shown in Fig.~\ref{fig:impact_ratio}). At each touchdown, the regenerative energy flow $e_{\mathrm{reg}}$ towards the power source is monitored using the model~\eqref{eq:energy_flow}. The results indicate that not all configurations with low impact are equivalently suitable for energy recuperation.}
+    \caption{Results of the dropdown tests performed in simulation, with fixed joint impedance. The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5~\mathrm{m}$ multiple times with 6 different touchdown configurations chosen manually on the curve~\ref{fig:impact_ratio} (the same shown in Fig.~\ref{fig:impact_ratio}). At each touchdown, the regenerative energy flow $e_{\mathrm{reg}}$ towards the power source is monitored using the model~\eqref{eq:energy_flow}. The results indicate that not all configurations with low impact are equivalently suitable for energy recuperation.}
     \label{fig:fixed_imp_reg_energy}
 \end{figure}
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/dropdown_const_landing.pdf}
-    \caption{Results of the dropdown tests performed in simulation, with the landing configuration fixed to the n.~$4$ (shown in Fig.~\ref{fig:impact_ratio}). The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5\mathrm{m}$ multiple times with 4 different joint impedance setpoints. At each touchdown, the regenerative energy flow $e_{\mathrm{reg}}$ towards the power source is monitored using the energy model~\eqref{eq:energy_flow}. The results confirm that landing with stiff joints greatly diminishes the amount of energy recovered. On the contrary landing with \enquote{soft} joints diminishes the joule losses inside the actuators, due to the lower required braking torques.}
+    \caption{Results of the dropdown tests performed in simulation, with the landing configuration fixed to the n.~$4$ (shown in Fig.~\ref{fig:impact_ratio}). The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5~\mathrm{m}$ multiple times with 4 different joint impedance setpoints, shown at the top left of the figure (stiffness and damping setpoints, respectively). At each touchdown, the regenerative energy flow $e_{\mathrm{reg}}$ towards the power source is monitored using the energy model~\eqref{eq:energy_flow}. The results confirm that landing with stiff joints greatly diminishes the amount of energy recovered. On the contrary landing with \enquote{soft} joints diminishes the joule losses inside the actuators, due to the lower required braking torques.}
     \label{fig:fixed_conf_reg_energy}
 \end{figure}
 
@@ -245,7 +245,8 @@ where
     u_b = \left[\dot{v},\,f\right]
 \end{eqnarray}
 and $\ell_f$ and $\ell_{\dot{v}}$ are simple weighted quadratic regularizations on the inputs. In this case, being the braking a less dynamic phase than the take-off, we don't employ the additional regularization terms on the $\ddot{v}$ and $\dot{f}$ (see Sec.~\ref{subsec:takeoff_opt}). The weighted stage cost $\ell_{p_{\mathrm{batt}}}$ is build using directly $- p_{\mathrm{batt}}$~\eqref{eq:power_balance} and neglecting the inductive term. 
-Differently from before, we formulate the problem with a fixed phase duration $T_f$ and impose the impact dynamics laws of Section~\ref{subsec:impact_min} only at the initial instant of the optimization horizon, where $v^{-}$~\eqref{eq:impact_dyn} assumes the role of a parameter of the problem. To encourage impact mitigation, we use a weighted initial cost $\ell_{\Delta E_k}^{I}$, based directly on~\eqref{eq:delta_e_k}. We furthermore use a simple weighted quadratic terminal cost $\ell_{v}^F$ to promote low velocities at the end of the horizon (the leg needs to break).
+Differently from before, we formulate the problem with a fixed phase duration $T_f$ and impose the impact dynamics laws of Section~\ref{subsec:impact_min} only at the initial instant of the optimization horizon, where $v^{-}$~\eqref{eq:impact_dyn} assumes the role of a parameter of the problem. To encourage impact mitigation, we use a weighted initial cost $\ell_{\Delta E_k}^{I}$, based directly on~\eqref{eq:delta_e_k_altern}. 
+%We furthermore use a simple weighted quadratic terminal cost $\ell_{v}^F$ to promote low velocities at the end of the horizon (the leg needs to break).
 % \begin{eqnarray}\label{eq:reg_v}
 %     % &\ell_{v, i} = \dfrac{1}{v(0)^T\,v(0) + \epsilon}\\
 %     &\ell_{v, f} = v^T(T_f)\,v(T_{f})
@@ -278,7 +279,8 @@ where
 \end{dmath}
 are our optimization variables and
 \begin{dmath}\label{eq:takeoff_opt_L_b}
-    L_{b} \left( W_b\right) = \ell_{\Delta E_k}^{I} + \int_{0}^{T_f}\,\ell_{b}(\tau)\,d\tau + \ell_{v}^F
+    L_{b} \left( W_b\right) = \ell_{\Delta E_k}^{I} + \int_{0}^{T_f}\,\ell_{b}(\tau)\,d\tau
+%     + \ell_{v}^F
 \end{dmath}
 is the employed cost function.
 % It should be noted that we could have inverted~\eqref{eq:impact_dyn} and obtained analytical expressions for the relationships between $v^{+} - v^{-}$ and $i$ or $\chi_{\mathrm{tip}}^{+} - \chi_{\mathrm{tip}}^{-}$ and $i$ as done in~\cite{impact_dyn::walker1994impact}, but this would require the introduction of the well-known \textit{cartesian inertia matrix} $\Lambda\,\coloneqq \left(J\,B^{-1}\,J^{T}\right)$. This in turn, would need the computation of $B^{-1}$, which would reintroduce the issues related to forward dynamics formulations~\cite{to::ferrolho2021inverse}. 
