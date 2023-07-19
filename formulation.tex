@@ -129,7 +129,8 @@ As an additional remark, the authors would like to underline the importance of t
     \caption{Joint accelerations (on top) and normal component of the ground reaction force obtained for a refined take-off problem without jerk and yank minimization: the solver exploits a caveat in the inverse dynamics formulation and finds a solution which respects node constraints, but is not feasible in reality.\vspace{-0.3cm}}
     \label{fig:inv_dyn_caveat}
 \end{figure}
-Fig.~\ref{fig:inv_dyn_caveat} shows the results of a refined solution where the regularization costs on the jerk $\ddot{v}$ and the yank $\dot{f}$ are not employed. Looking at the picture, the solver exploits a caveat in the inverse dynamics-based formulation and produces an impulse of $f$ at the takeoff-instant without violating the inverse dynamics on the nodes. It does so by compensating with corresponding impulses of $\dot{v}$. This acceleration and ground reaction forces are however not feasible in reality, and this could be checked by looking at the dynamics residuals obtained by re-sampling the refined trajectory at a higher rate. This shows how with the inverse dynamics-based formulation applied to highly dynamic TO needs to be complemented with suitable regularization of the jerk $\dot{v}$ and $\dot{f}$ to function properly.
+Fig.~\ref{fig:inv_dyn_caveat} shows the results of a refined solution where the regularization costs on the jerk $\ddot{v}$ and the yank $\dot{f}$ are not employed. Looking at the picture, the solver exploits a caveat in the inverse dynamics-based formulation and produces an impulse of $f$ at the takeoff-instant without violating the inverse dynamics on the nodes. It does so by compensating with corresponding impulses of $\dot{v}$. This acceleration and ground reaction forces are however not feasible in reality, and this could be checked by looking at the dynamics residuals obtained by re-sampling the refined trajectory at a higher rate.
+This shows how with the inverse dynamics-based formulation applied to highly dynamic TO needs to be complemented with suitable regularization of the jerk $\dot{v}$ and $\dot{f}$ to function properly.
 \subsection{Landing phase: impact dynamics modeling}\label{subsec:impact_min}
 \begin{figure}[t]
     \centering
@@ -226,10 +227,10 @@ Inside~\eqref{eq:energy_flow} we can distinguish, in this order, the initial ene
 Figures~\ref{fig:fixed_imp_reg_energy} and~\ref{fig:fixed_conf_reg_energy} report data from two series of dropdown tests performed in simulation while monitoring the energy flow with~\eqref{eq:energy_flow}. 
 %The leg, while being controlled by a joint-space impedance control, is dropped from an height on $0.5\mathrm{m}$ multiple times with different configurations and different joint impedance setpoints. 
 After each touchdown, the energy recovered is evaluated using~\eqref{eq:energy_flow}. The results show that not all low-impact configurations are suitable for energy regeneration and that the amount of recovered energy is indeed also influenced greatly by the employed joint impedance setpoints. 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=1.0\columnwidth]{images/reg_pow_tracking.pdf}
-    \caption{Validation of the model of the power flow model: the leg stands on the ground with low-joint impedance and an vertical oscillating force is applied to the base link. Looking at the plot, we can confirm that the model is indeed accurate in predicting the power flow of our setup.\vspace{-0.3cm}}
+    \caption{Validation of the model of the power flow model: the leg stands on the ground with low-joint impedance and an vertical oscillating force is applied to the base link. Looking at the plot, we can confirm that the model is indeed accurate in predicting the power flow of our setup.\vspace{-0.7cm}}
     \label{fig:reg_pow_model_tracking}
 \end{figure}
 The model~\eqref{eq:power_balance} was also successfully validated on the real hardware by employing a suitable power sensing setup. The results of the validation are shown and briefly discusses in Fig.~\ref{fig:reg_pow_model_tracking}. 
@@ -238,7 +239,7 @@ Motivated by the results shown in Fig~\ref{fig:fixed_conf_reg_energy} and~\ref{f
 \begin{dmath}\label{eq:takeoff_running_cost_braking}
     \ell_{b}(x_b, u_b) = \ell_{p_{\mathrm{batt}}} + \ell_f + \ell_{\dot{v}}
 \end{dmath}
-where
+where\vspace{-0.5cm}
 \begin{eqnarray}
     x_b = \left[q,\,v\right]\\
     u_b = \left[\dot{v},\,f\right]
