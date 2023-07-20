@@ -43,6 +43,7 @@
 \usepackage{xcolor}
 \usepackage{optidef}
 \usepackage{cleveref}
+\usepackage{setspace}
 
 \newcommand{\cmark}{\ding{51}}%
 \newcommand{\xmark}{\ding{55}}%
@@ -55,6 +56,11 @@
 %\makeatother
 
 \begin{document}
+	
+\linespread{0.95}
+\setlength{\textfloatsep}{1pt}  % Replace X with the desired length in points
+\setlength{\intextsep}{1pt}
+\setlength{\abovecaptionskip}{1pt}
 
 \title{\LARGE \bf
 Optimal Design of Agile Jumping Maneuvers for a Single Leg System
@@ -129,7 +135,7 @@ validate the accuracy of the employed models and the results of the optimization
 
 \input{conclusions}
 
-% \input{acknowledgements}
+\input{acknowledgements}
 
 % \input{appendix}
 \bibliographystyle{ieeetr}\vspace{-0.2cm}

@@ -37,7 +37,7 @@ where $\mathrm{signh}()$ is a smooth approximation of the sign function based on
 \begin{figure}
     \centering
     \includegraphics[width=1.0\columnwidth]{images/iq_tracking.pdf}
-    \caption{Validation of the quadrature current $i_q$ model during a simple test: the leg stands on the ground with low-joint impedance and a vertical pushing force is applied to the base link. The tracking of the calibrated model is accurate, thus justifying its incorporation into our TO formulation.\vspace{-0.3cm}}
+    \caption{Validation of the quadrature current $i_q$ model during a simple test: the leg stands on the ground with low-joint impedance and a vertical pushing force is applied to the base link. The tracking of the calibrated model is accurate, thus justifying its incorporation into our TO formulation.}
     \label{fig:iq_model_tracking}
 \end{figure}
 \subsection{Take-off optimization: maximizing the reached apex height}\label{subsec:takeoff_opt}
@@ -126,7 +126,7 @@ As an additional remark, the authors would like to underline the importance of t
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/inv_dyn_caveat.pdf}
-    \caption{Joint accelerations (on top) and normal component of the ground reaction force obtained for a refined take-off problem without jerk and yank minimization: the solver exploits a caveat in the inverse dynamics formulation and finds a solution which respects node constraints, but is not feasible in reality.\vspace{-0.3cm}}
+    \caption{Joint accelerations (on top) and normal component of the ground reaction force obtained for a refined take-off problem without jerk and yank minimization: the solver exploits a caveat in the inverse dynamics formulation and finds a solution which respects node constraints, but is not feasible in reality.}
     \label{fig:inv_dyn_caveat}
 \end{figure}
 Fig.~\ref{fig:inv_dyn_caveat} shows the results of a refined solution where the regularization costs on the jerk $\ddot{v}$ and the yank $\dot{f}$ are not employed. Looking at the picture, the solver exploits a caveat in the inverse dynamics-based formulation and produces an impulse of $f$ at the takeoff-instant without violating the inverse dynamics on the nodes. It does so by compensating with corresponding impulses of $\dot{v}$. This acceleration and ground reaction forces are however not feasible in reality, and this could be checked by looking at the dynamics residuals obtained by re-sampling the refined trajectory at a higher rate.
@@ -135,7 +135,7 @@ This shows how with the inverse dynamics-based formulation applied to highly dyn
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/impact_ratio.pdf}
-    \caption{Depending on the landing configuration, the impact felt by the robot at the ground can vary greatly. In this figure, we show how the impact ratio $\rho$ changes with the landing configuration, which is described by the two joint variables $q_1$ and $q_2$. We specifically highlight 6 representative configurations, which are shown on top of the impact curves.\vspace{-0.3cm}}
+    \caption{Depending on the landing configuration, the impact felt by the robot at the ground can vary greatly. In this figure, we show how the impact ratio $\rho$ changes with the landing configuration, which is described by the two joint variables $q_1$ and $q_2$. We specifically highlight 6 representative configurations, which are shown on top of the impact curves.}
     \label{fig:impact_ratio}
 \end{figure}
 After the apex of the flight phase, the leg will make contact with the ground. Under the usual assumption that the impact duration is negligible with respect to the time scale over which the body dynamics evolves, it is possible to integrate~\eqref{eq:rigid_body_dyn} over the impact instant to obtain the so called \textit{impact dynamics}~\cite{impact_dyn::walker1990use}:
@@ -202,13 +202,13 @@ Exploiting the simplicity of~\eqref{eq:impact_ratio}, we can have a quantitative
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/dropdown_const_imp.pdf}
-    \caption{Results of the dropdown tests performed in simulation, with fixed joint impedance. The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5~\mathrm{m}$ multiple times with 6 different touchdown configurations chosen manually on the curve~\ref{fig:impact_ratio} (the same shown in Fig.~\ref{fig:impact_ratio}). At each touchdown, the regenerative energy flow $e_{\mathrm{reg}}$ towards the power source is monitored using the model~\eqref{eq:energy_flow}. The results indicate that not all configurations with low impact are equivalently suitable for energy recuperation.\vspace{-0.3cm}}
+    \caption{Results of the dropdown tests performed in simulation, with fixed joint impedance. The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5~\mathrm{m}$ multiple times with 6 different touchdown configurations chosen manually on the curve~\ref{fig:impact_ratio} (the same shown in Fig.~\ref{fig:impact_ratio}). At each touchdown, the regenerative energy flow $e_{\mathrm{reg}}$ towards the power source is monitored using the model~\eqref{eq:energy_flow}. The results indicate that not all configurations with low impact are equivalently suitable for energy recuperation.}
     \label{fig:fixed_imp_reg_energy}
 \end{figure}
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/dropdown_const_landing.pdf}
-    \caption{Results of the dropdown tests performed in simulation, with the landing configuration fixed to the n.~$4$ (shown in Fig.~\ref{fig:impact_ratio}). The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5~\mathrm{m}$ multiple times with 4 different joint impedance setpoints, shown at the top left of the figure (stiffness and damping setpoints, respectively). At each touchdown, the regenerative energy flow $e_{\mathrm{reg}}$ towards the power source is monitored using the energy model~\eqref{eq:energy_flow}. The results confirm that landing with stiff joints greatly diminishes the amount of energy recovered. On the contrary landing with \enquote{soft} joints diminishes the joule losses inside the actuators, due to the lower required braking torques.\vspace{-0.3cm}}
+    \caption{Results of the dropdown tests performed in simulation, with the landing configuration fixed to the n.~$4$ (shown in Fig.~\ref{fig:impact_ratio}). The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5~\mathrm{m}$ multiple times with 4 different joint impedance setpoints, shown at the top left of the figure (stiffness and damping setpoints, respectively). At each touchdown, the regenerative energy flow $e_{\mathrm{reg}}$ towards the power source is monitored using the energy model~\eqref{eq:energy_flow}. The results confirm that landing with stiff joints greatly diminishes the amount of energy recovered. On the contrary landing with \enquote{soft} joints diminishes the joule losses inside the actuators, due to the lower required braking torques.}
     \label{fig:fixed_conf_reg_energy}
 \end{figure}
 
@@ -230,7 +230,7 @@ After each touchdown, the energy recovered is evaluated using~\eqref{eq:energy_f
 \begin{figure}[h]
     \centering
     \includegraphics[width=1.0\columnwidth]{images/reg_pow_tracking.pdf}
-    \caption{Validation of the model of the power flow model~\eqref{eq:power_balance}: the leg stands on the ground with low-joint impedance and an vertical oscillating force is applied to the base link. Looking at the plot, we can confirm that the model is indeed accurate in predicting the power flow of our setup.\vspace{-0.7cm}}
+    \caption{Validation of the model of the power flow model~\eqref{eq:power_balance}: the leg stands on the ground with low-joint impedance and an vertical oscillating force is applied to the base link. Looking at the plot, we can confirm that the model is indeed accurate in predicting the power flow of our setup.}
     \label{fig:reg_pow_model_tracking}
 \end{figure}
 The model~\eqref{eq:power_balance} was also successfully validated on the real hardware by employing a suitable power sensing setup. The results of the validation are shown and briefly discusses in Fig.~\ref{fig:reg_pow_model_tracking}. 
