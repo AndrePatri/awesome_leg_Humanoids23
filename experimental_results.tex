@@ -23,7 +23,7 @@ As detailed in Section~\ref{subsec:energy_rec_opt}, once a solution of the probl
 &\hat{q} = \left[1.34,~1.33\right]~\mathrm{rad}\nonumber
 \end{align}
 
-~\hspace{-0.55cm}after a total of $147$ iterations (see Fig.~\ref{fig:convergence_plots}). Looking at Fig.~\ref{fig:impact_ratio}, the optimal $\hat{q}$ is almost on the same curve of the configurations n.$1$ and n.$2$, with an impact ratio $\rho$ of approximately $3.84~\mathrm{N\,s^{2}/m}$, an impulse $\hat{f}$ of $10.73~\mathrm{N\,s}$ and a total of $37.19~\mathrm{J}$ of theoretical recovered energy. Figure~\ref{fig:critically_damped_pow} shows the power flow during braking associated with the final optimal solution~\eqref{eq:optimal_braking_sol} (top) and a solution obtained without energy recovery maximization cost. Specifically, it is interesting to note how in the case of~\eqref{eq:optimal_braking_sol}, the regenerative power trajectory follows a \enquote{critically damped} evolution. 
+~\hspace{-0.55cm}after a total of $147$ iterations (see Fig.~\ref{fig:convergence_plots}). Looking at Fig.~\ref{fig:impact_ratio}, the optimal $\hat{q}$ is almost on the same curve of the configurations n.$1$ and n.$2$, with an impact ratio $\rho$ of approximately $-3.84~\mathrm{N\,s^{2}/m}$, an impulse $\hat{f}$ of $10.73~\mathrm{N\,s}$ and a total of $37.19~\mathrm{J}$ of theoretical recovered energy. Figure~\ref{fig:critically_damped_pow} shows the power flow during braking associated with the final optimal solution~\eqref{eq:optimal_braking_sol} (top) and a solution obtained without energy recovery maximization cost. Specifically, it is interesting to note how in the case of~\eqref{eq:optimal_braking_sol}, the regenerative power trajectory follows a \enquote{critically damped} evolution. 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\columnwidth]{images/critically_damped_vs_no_reg_pow_max.pdf}
@@ -48,14 +48,14 @@ The obtained take-off trajectory is replayed on the real robot exploiting the XB
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=1\columnwidth]{images/hardware_saturation.pdf}
-	\caption{Data from multiple executions of the optimal take-off trajectory on the real robot. On top, an additional validation of the $i_q$ model (shown for the hip joint and a single jump). At the bottom, the measured currents (right) and torques (left) during  jumps, which are in line with the computed values shown in~Fig.~\ref{fig:takeoff_opt_data}.}
+	\caption{Data from multiple executions of the optimal take-off trajectory on the real robot. On top, an further validation of the $i_q$ model (shown for the hip joint and a single jump). At the bottom, the measured currents (right) and torques (left) during  jumps, which are in line with the computed values shown in~Fig.~\ref{fig:takeoff_opt_data}.}
 	\label{fig:takeoff_execution}
 \end{figure}
 \subsection{Energy regeneration results}
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/opt_vs_non_opt_conf.pdf}
-    \caption{Regenerated energy $e_{\mathrm{reg}}$ at touchdown after the execution of the optimal take-off trajectory, measured using 6 impedance setpoints and landing configurations $\hat{q}$, including the optimal ones. In the non-optimal cases, the landing configuration is simply set to the one at the apex of the takeoff trajectory, i.e. $q_1~=~0.44~\mathrm{rad},~q_2~=~0.66~\mathrm{rad}$, with an associated impact ratio $\rho$~\eqref{eq:impact_ratio} of $4.65~\mathrm{N\,s^2/m}$. 
+    \caption{Regenerated energy $e_{\mathrm{reg}}$ at touchdown after the execution of the optimal take-off trajectory, measured using 6 impedance setpoints and landing configurations $\hat{q}$, including the optimal ones. In the non-optimal cases, the landing configuration is simply set to the one at the apex of the takeoff trajectory, i.e. $q_1~=~0.44~\mathrm{rad},~q_2~=~0.66~\mathrm{rad}$, with an associated impact ratio $\rho$~\eqref{eq:impact_ratio} of $-4.65~\mathrm{N\,s^2/m}$. 
 %   	The optimized landing parameters~\eqref{eq:optimal_braking_sol} ($n_5$ sample) outperform all the non-optimal ones. 
    	The differences of the simulation and hardware results wrt the computed theoretical regeneration of $37.19~\mathrm{J}$ (see Sec.~\ref{sec:land_conf}) are attributable to the inevitable mismatches in both landing velocity and configuration which arise during the pre-landing flight phase.}
     \label{fig:energy_rec_comp}
