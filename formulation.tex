@@ -91,7 +91,7 @@ We also impose the apex at the final instant with the terminal constraint
 \dot{\chi}_{\mathrm{CoM, z}} = 0;~t = T_{\mathrm{apex}}
 \end{equation}
 % The flight phase is imposed by constraining the contact force to be null after the takeoff, up to the final instant. Furthermore $f$ should always be positive and its tangential component $f$ should lie inside the friction pyramid defined by the coefficient~$\mu$ and the tangential an normal components $f_t$ and $f_n$. Summing up:
-We impose contact and friction contraints on $f$ with
+We impose contact and friction constraints on $f$ with
 \begin{eqnarray}\label{eq:f_cnstrnt}
 &f \geq 0;~t\in\left[0, T_{\mathrm{takeoff}}\right] \label{eq:f_positive} \\
 &f = 0; ~t\in\left[T_{\mathrm{takeoff}}, T_{\mathrm{apex}}\right] \\
@@ -208,7 +208,7 @@ Exploiting the simplicity of~\eqref{eq:impact_ratio}, we can have a quantitative
 \begin{figure}[t]
     \centering
     \includegraphics[width=1\columnwidth]{images/dropdown_const_landing.pdf}
-    \caption{Results of the dropdown tests performed in simulation, with the landing configuration fixed to the n.~$4$ (shown in Fig.~\ref{fig:impact_ratio}). The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5~\mathrm{m}$ multiple times with 4 different joint impedance setpoints, shown at the top left of the figure (stiffness and damping setpoints, respectively). At each touchdown, the regenerative energy flow $e_{\mathrm{batt}}$ towards the power source is monitored using the energy model~\eqref{eq:energy_flow}. The results confirm that landing with stiff joints greatly diminishes the amount of energy recovered. On the contrary landing with \enquote{soft} joints diminishes the joule losses inside the actuators, due to the lower required braking torques.}
+    \caption{Results of the drop-down tests performed in simulation, with the landing configuration fixed to the n.~$4$ (shown in Fig.~\ref{fig:impact_ratio}). The leg is dropped from an height (of the tip w.r.t. to the ground) of $0.5~\mathrm{m}$ multiple times with 4 different joint impedance set points, shown at the top left of the figure (stiffness and damping set points, respectively). At each touchdown, the regenerative energy flow $e_{\mathrm{batt}}$ towards the power source is monitored using the energy model~\eqref{eq:energy_flow}. The results confirm that landing with stiff joints greatly diminishes the amount of energy recovered. On the contrary landing with \enquote{soft} joints diminishes the joule losses inside the actuators, due to the lower required braking torques.}
     \label{fig:fixed_conf_reg_energy}
 \end{figure}
 
@@ -224,9 +224,9 @@ e_{\mathrm{batt}}(t) = e_{\mathrm{batt}}(t_0)- \dfrac{3}{2}\,R\,\int_{t_0}^{t}\,
 \end{dmath}\vspace{-0.2cm}
 Inside~\eqref{eq:energy_flow} we can distinguish, in this order, the initial energy level of the battery, the dissipative joule losses, a conservative term representing the energy stored inside the motor phases and the mechanical energy at the motor rotor. For our purposes, the inductive term in~\eqref{eq:energy_flow}, which is conservative and also weighted by $L_q$ (usually in the order of $\mu\,\mathrm{H}$), can be neglected. 
 
-Figures~\ref{fig:fixed_imp_reg_energy} and~\ref{fig:fixed_conf_reg_energy} report data from two series of dropdown tests performed in simulation while monitoring the energy flow with~\eqref{eq:energy_flow}. 
+Figures~\ref{fig:fixed_imp_reg_energy} and~\ref{fig:fixed_conf_reg_energy} report data from two series of drop-down tests performed in simulation while monitoring the energy flow with~\eqref{eq:energy_flow}. 
 %The leg, while being controlled by a joint-space impedance control, is dropped from an height on $0.5\mathrm{m}$ multiple times with different configurations and different joint impedance setpoints. 
-After each touchdown, the energy recovered is evaluated using~\eqref{eq:energy_flow}. The results show that not all low-impact configurations are suitable for energy regeneration and that the amount of recovered energy is indeed also influenced greatly by the employed joint impedance setpoints. 
+After each touchdown, the energy recovered is evaluated using~\eqref{eq:energy_flow}. The results show that not all low-impact configurations are suitable for energy regeneration and that the amount of recovered energy is indeed also influenced greatly by the employed joint impedance set points. 
 \begin{figure}[t]
     \centering
     \includegraphics[width=1.0\columnwidth]{images/reg_pow_tracking.pdf}

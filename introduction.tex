@@ -2,7 +2,7 @@
 
  Legged robots are among the most versatile robotic platforms available. As their natural counterpart, they show great flexibility and are particularly suited for applications where navigation through unstructured environments is required. 
 
-The development of robots capable of fully exploiting the potential of legged morphologies is, however, a non-trivial task, both in terms of design and control. There are several instances of robots that come close to achieving this.
+The development of robots capable of fully exploiting the potential of legged morphology is, however, a non-trivial task, both in terms of design and control. There are several instances of robots that come close to achieving this.
 % For instance, in~\cite{agile_bots::hawkes2022engineered} the authors employ the work multiplication principle to design and control a miniature robot capable of exceeding the jumping performance of any biological jumper. 
 % A hybrid approach is employed by Ascento~\cite{agile_bots::klemm2019ascento}, which uses wheeled-locomotion for normal navigation and jumping motions generated with a multi-phase heuristic feed-forward controller to overcome challenging obstacles.
 The autonomous quadruped ANYmal~\cite{agile_bots::hutter2016anymal} is, for instance, an example of a torque-controllable robot capable of robustly navigating through harsh industrial environments while performing complex locomotion tasks.
@@ -21,6 +21,7 @@ Motivated by the end goal of developing a new electrically powered agile quadrup
 % links, joints, actuators, power and control electronics are all pushed to their limits. 
 \begin{figure*}[t]
     \centering
+    \vspace{0.2cm}
     \includegraphics[width=0.9\textwidth]{images/jump_phases_and_pipeline.pdf}
     \caption{A jump sequence decomposed into four main phases, which are synthetically depicted at the center of the figure: the takeoff, the flight, the impact and the braking. During the takeoff phase, energy flows from the power source towards the actuators; after the impact, however, the leg brakes and some of the residual kinetic energy is sent back to the power source and is thus available for regeneration. 
     % Our optimization and control pipeline seeks to exploit these characteristics and, in particular, is made of an offline layer, which houses two separate TO problems, and an online layer, occupied by a simple joint-level impedance controller. 
