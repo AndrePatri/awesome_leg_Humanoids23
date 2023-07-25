@@ -49,32 +49,6 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{frame}
-\begin{multicols}{2}
-\vfill\null
-Experimental setup: 
-\begin{itemize}
-\item 2 d.o.f \textbf{electrically-powered}, \textbf{torque-controllable} quadruped leg prototype, $50:1$ gear ratio
-\item 1 d.o.f. sliding guide
-\item $25\,\mathrm{Ah}$, $51.2\,\mathrm{V}$ \textbf{battery} unit, $100\,\mathrm{A}$ peak discharge current
-\item dedicated \textbf{power sensing setup} for measuring regenerative power
-\item peak torque: $112~\mathrm{N~m}$
-\item peak velocity: $18.8~\mathrm{rad/s}$
-\item peak current: $50~\mathrm{A}$
-\end{itemize}
-\vfill\null
-\columnbreak
-\vfill\null
-\vspace{0.5cm}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.5\columnwidth]{beamer_imgs/jump_sequence_intro_image/real1.png}
-\end{figure}
-\end{multicols}
-\end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %\begin{frame}
 %Given the scope of our project and our experimental setup, we showcase a study revolving around
 %\begin{itemize}
@@ -196,68 +170,163 @@ Resulting in \textbf{smooth}\\ TO inputs:
 \end{frame}
 
 \begin{frame}
+	\begin{multicols}{2}
+		\vfill\null
+		Experimental setup: 
+		\begin{itemize}
+			\item 2 d.o.f \textbf{electrically-powered}, 12~$\mathrm{Kg}$,  \textbf{torque-controllable} quadruped leg prototype, $50:1$ gear ratio
+			\item 1 d.o.f. sliding guide
+			\item $25\,\mathrm{Ah}$, $51.2\,\mathrm{V}$ \textbf{battery} unit, $100\,\mathrm{A}$ peak discharge current
+			\item peak torque: $112~\mathrm{N~m}$
+			\item peak velocity: $20~\mathrm{rad/s}$
+			\item peak current: $50~\mathrm{A}$
+		\end{itemize}
+		\vfill\null
+		\columnbreak
+		\vfill\null
+		\vspace{0.5cm}
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.5\columnwidth]{beamer_imgs/jump_sequence_intro_image/real1.png}
+		\end{figure}
+	\end{multicols}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+	\begin{multicols}{2}
+		\vfill\null
+		Experimental setup: 
+		\begin{itemize}
+			\item dedicated etherCAT slave for regenerative \textbf{power sensing}
+			\item current sensor connected to slave: HASS 100-S
+			\item voltage sensor embedded in slave: signal sent through voltage divider, read by A/D converter (AD7682) 
+		\end{itemize}
+		\vfill\null
+		\columnbreak
+		\vfill\null
+		\vspace{0.5cm}
+		\begin{figure}
+			\centering
+			\phantom{\includegraphics[width=0.6\columnwidth]{beamer_imgs/power_sensor.png}}
+		\end{figure}
+	\end{multicols}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+	\begin{multicols}{2}
+		\hphantom{e}\\
+		Optimal take-off from TO:
+		\vfill\null
+		\columnbreak
+		\hphantom{e}\\
+		\phantom{Optimal landing from TO:}
+		
+		\begin{figure}
+			\centering
+			\phantom{\includegraphics[width=0.5\columnwidth]{beamer_imgs/opt2sim.pdf}}
+		\end{figure}
+	\end{multicols}
+\end{frame}
+
+\begin{frame}
+	\begin{multicols}{2}
+		\hphantom{e}\\
+		\phantom{Optimal take-off from TO:}
+		\vfill\null
+		\columnbreak
+		\hphantom{e}\\
+		Optimal landing from TO:
+		
+		\begin{figure}
+			\centering
+			\phantom{\includegraphics[width=0.5\columnwidth]{beamer_imgs/opt2sim.pdf}}
+		\end{figure}
+	\end{multicols}
+\end{frame}
+
+\begin{frame}
 \begin{multicols}{2}
 \vspace{0.5cm}\hphantom{e}\\
 Optimal take-off trajectory \textbf{replay}:
-\vfill\null
-\columnbreak
-\vspace{0.5cm}\hphantom{e}\\
-Reduced optimization-to-reality gap:
 \begin{figure}
-    \centering
-    \includegraphics[width=0.5\columnwidth]{beamer_imgs/opt2sim.pdf}
+	\centering
+	\phantom{\includegraphics[width=0.5\columnwidth]{beamer_imgs/opt2sim.pdf}}
 \end{figure}
+\columnbreak
+\hphantom{e}
 \end{multicols}
 \end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{frame}
-Measured regeneration @ touchdown:
-\begin{itemize}
-\item \textbf{optimal} take-off
-\item \textbf{opt}. configuration/impedance
-\item \textbf{real} robot
-\end{itemize}
-\begin{multicols}{2}
-\begin{figure}
-    \includegraphics[width=1.0\columnwidth]{beamer_imgs/reg_energy.pdf}
-\end{figure}
-\columnbreak
-\begin{figure}
-\includegraphics[width=1.0\columnwidth]{beamer_imgs/reg_pow.pdf}
-\end{figure}
-\end{multicols}
+	\begin{multicols}{2}
+		\vspace{0.5cm}\hphantom{e}\\
+		Optimal take-off trajectory \textbf{replay}:
+		\begin{figure}
+			\centering
+			\phantom{\includegraphics[width=0.5\columnwidth]{beamer_imgs/opt2sim.pdf}}
+		\end{figure}
+		\columnbreak
+		\hphantom{e}\\
+		\vspace{3cm}
+		$\rightarrow$ reduced optimization-to-reality gap
+	\end{multicols}
 \end{frame}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 \begin{frame}
-Estimated regeneration @ touchdown; successive jumping test:
-\begin{itemize}
-\item \textbf{optimal} take-off
-\item \textbf{opt}. configuration/impedance
-\item \textbf{simulated} robot
-\end{itemize}
-\begin{multicols}{2}
-\begin{figure}
-    \centering
-    \includegraphics[width=1.0\columnwidth]{beamer_imgs/e_batt_sim.pdf}
-\end{figure}
-\vfill\null
-\columnbreak
-\centering
-\begin{figure}
-\includegraphics[width=1.0\columnwidth]{beamer_imgs/p_batt_sim.pdf}
-\end{figure}
-\vfill\null
-\end{multicols}
+	\centering Full optimal sequence \\(simulation)
+	\begin{multicols}{2}
+		\vspace{0.5cm}\hphantom{e}\\
+		
+		\vfill\null
+		\columnbreak
+		\vspace{0.5cm}\hphantom{e}\\
+		\begin{figure}
+			\centering
+			\phantom{\includegraphics[width=0.5\columnwidth]{beamer_imgs/opt2sim.pdf}}
+		\end{figure}
+	\end{multicols}
 \end{frame}
 
+\begin{frame}
+	\centering Full optimal sequence \\ (hardware)
+	\begin{multicols}{2}
+		\vspace{0.5cm}\hphantom{e}\\
+		
+		\vfill\null
+		\columnbreak
+		\vspace{0.5cm}\hphantom{e}\\
+		\begin{figure}
+			\centering
+			\phantom{\includegraphics[width=0.5\columnwidth]{beamer_imgs/opt2sim.pdf}}
+		\end{figure}
+	\end{multicols}
+\end{frame}
+
+\begin{frame}
+	\centering Extensive experimental campaign on both\\ simulation and hardware
+	\begin{multicols}{2}
+		\begin{itemize}
+			\item Models validation
+			\item Multiple consecutive full executions
+			\item 29 repetitions on hardware (with opt. take-off, landing)
+			\item 15 repetitions in simulation (with opt. take-off, landing)
+			\item $> 75$ cross-validations in simulation (opt. take-off, non opt. landing) 
+			 
+		\end{itemize}
+		\vfill\null
+		\columnbreak
+		\vspace{0.5cm}\hphantom{e}\\
+		\begin{figure}
+			\centering
+			\phantom{\includegraphics[width=0.5\columnwidth]{beamer_imgs/opt2sim.pdf}}
+		\end{figure}
+	\end{multicols}
+\end{frame}
 
 \titleframe
-
-
 
 \end{document}
