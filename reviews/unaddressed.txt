@@ -1,0 +1,23 @@
+The technical contribution of the take-off trajectory
+generation method seems to the reviewer to be minor.
+
+It might also be helpful to add a phrase such as "based on
+simulation of BLDC motors" to the title.
+
+The authors should also measure and report the data of
+the actual machine for n0 to n4 in Fig. 13.
+
+In the introduction, it is unclear how one-leg jumping
+contributes to the development of agile quadruped, the end
+goal of this study.
+It should be explained that how higher jumping and energy
+regeneration promote agility of quadrpedal locomotion.
+If the goal is efficient locomotion, energy consumption
+should be considered in all phases including takeoff phase.
+
+In the aerial phase, the robot cannot obtain any force, and
+the motion of the robot is uniquely determined.
+Then, maximizing jumping height at T_{appex} is identical
+maximizing takeoff velocity at T_{takeoff}.
+Why did the duration from the takeoff to the appex 
+consider in the problem?
