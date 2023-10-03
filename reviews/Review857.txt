@@ -1,0 +1,64 @@
+Reviewer 2 of Humanoids 2023 submission 115
+
+Comments to the author
+======================
+
+This paper proposed a trajectory optimization for one-leg
+jumping, which consists of two stages: takeoff and landing.
+The method was validated by both simulations and hardware
+experiments.
+The TO is designed to maximize jump height during the
+takeoff phase and energy recovery during the landing phase.
+Features of the method is that it take into account current
+effects in electorical motors.
+For takeoff, motor current limitation with torque is took
+into account as a constraint.
+Energy regeneration by impact is maximized while landing.
+As the authors mentioned, analysis of the impact dynamics
+and energy regeneration written in Sec. III-D and III-E is
+novel and very interesting.
+However, there are some unclear parts in this paper.
+
+
+In the introduction, it is unclear how one-leg jumping
+contributes to the development of agile quadruped, the end
+goal of this study.
+It should be explained that how higher jumping and energy
+regeneration promote agility of quadrpedal locomotion.
+If the goal is efficient locomotion, energy consumption
+should be considered in all phases including takeoff phase.
+
+Sec. III is well written, and especially III-D is very
+interesting.
+Both cost functions (9) and (41) have conflicting terms
+(e.g. the velocity term and the jumping height).
+Usually, the balance between them are resolved by weight
+parameters.
+If the weights did not require for the problems, please
+state it.
+
+The input vector $u_b$ in (6) does not exist in the cost
+function and the constraints of (21). 
+A state equation is needed to define, and is better used as
+the constraint of (21), instead of the rigid body dynamics
+(1).
+In the aerial phase, the robot cannot obtain any force, and
+the motion of the robot is uniquely determined.
+Then, maximizing jumping height at T_{appex} is identical
+maximizing takeoff velocity at T_{takeoff}.
+Why did the duration from the takeoff to the appex 
+consider in the problem?
+
+If my calculations are correct, the sign between two
+$\dot{x}_{tip}$ in (26) is negative.
+However, if the sign is negative, the following discussion
+becomes false.
+Please review this part.
+
+There is no definition of $l^I_{\Delta E_k}$ in (41).
+
+
+Comments on the Video Attachment
+================================
+
+The video is helpful to understand.

@@ -1,0 +1,69 @@
+Reviewer 1 of Humanoids 2023 submission 115
+
+Comments to the author
+======================
+
+Summary:
+This paper proposes a method for maximizing the jumping
+height and minimizing the dissipated energy due to landing
+in the generation of jumping trajectories.
+For the dissipated energy minimization method, the authors
+model the relationship between landing impact and energy
+recuperation at the electricaly-actuation level.
+Since the optimization problem of trajectory planning is
+complicated due to the formulation and computational
+complexity, the optimization problem is divided into the
+take-off phase and the landing phase for simplification.
+The performance of energy recuperation is evaluated through
+simulations and experiments on the actual machine.
+
+Major concern:
+- Technical novelty
+The technical contribution of the take-off trajectory
+generation method seems to the reviewer to be minor.
+On the other hand, it is interesting that the authors try
+to analyze the kinetic energy at the electrical level and
+regenerate energy in landing trajectory generation, which
+is novel as far as the reviewer knows.
+The authors use the expression "electrically-actuated" in
+the fifth paragraph of the Introduction, but the paper
+would be more clear and easy to understand if the authors
+added the expression "simulate Field Oriented Control on
+BLDC motors based on Direct-quadrature-zero
+transformation".
+It might also be helpful to add a phrase such as "based on
+simulation of BLDC motors" to the title.
+
+- Unclear definitions of variables
+The definitions of the following variables are unclear. It
+is extremely unkind of the paper to make readers guess
+these.
+
+-- Ambiguity of the components of v
+Does the first component of v refer to the vertical
+velocity and the other two represent the joint velocities?
+In Fig. 4, the units of all components are rad/s^2, but
+according to Eq.(30), isn't the unit of the first component
+of v m/s?
+
+-- Ambiguity of the dimensions and components of q and q^.
+As with v, the component of q is ambiguous.
+According to Eq.(42), q^ &#8712; R^2, but according to
+Eq.(39h) and the definition of q in Sec. IIIA), it is
+3-dimensional.
+The authors should correct these discrepancies.
+
+Also, since the order of the joints is not specified, it is
+not clear at first glance which joints are q1 and q2.
+An explanation should be added near Fig. 5.
+
+-- Ambiguity of the dimensions of Kp and Kd in Fig. 7
+In Fig.7, it seems that Kp, Kd &#8712; R, which is
+inconsistent with q &#8712; R^2. Did you use the same
+stiffness and impedance gain for all joints?
+
+Minor concern:
+- The authors should also measure and report the data of
+the actual machine for n0 to n4 in Fig. 13.
+- Eq.(19) is the same as Eq.(3), so it is unnecessary to
+write it twice.
