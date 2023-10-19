@@ -21,11 +21,12 @@ Motivated by the end goal of developing a new electrically powered agile quadrup
 % links, joints, actuators, power and control electronics are all pushed to their limits. 
 \begin{figure*}[t]
     \centering
+    \vspace{0.1cm}
     \includegraphics[width=0.9\textwidth]{images/jump_phases_and_pipeline.pdf}
     \caption{A jump sequence decomposed into four main phases, which are synthetically depicted at the center of the figure: the takeoff, the flight, the impact and the braking. During the takeoff phase, energy flows from the power source towards the actuators; after the impact, however, the leg brakes and some of the residual kinetic energy is sent back to the power source and is thus available for regeneration. 
     % Our optimization and control pipeline seeks to exploit these characteristics and, in particular, is made of an offline layer, which houses two separate TO problems, and an online layer, occupied by a simple joint-level impedance controller. 
     }
-	\vspace{-0.3cm}
+	\vspace{-0.4cm}
     \label{fig:pipeline}
 \end{figure*}
 To be able to perform a jumping task while fully exploiting the capabilities of our prototype, we developed a two-stage pipeline (shown in Fig.~\ref{fig:pipeline}) based on Trajectory Optimization (TO), which in recent years has become one of the most successful methods in generating complex motions for robotic systems\cite{agile_bots::nguyen2019optimized,agile_bots::chignoli2021humanoid, agile_bots::roscia2023orientation}.
