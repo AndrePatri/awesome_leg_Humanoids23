@@ -1,0 +1,1 @@
+The accompanying video provides a high-level and synthetic overview of the employed formulations, with also additional graphs to further backup the paper. If also contains futher information on the experimental setup. Moreover, clips of the optimal trajectories are shown for both simulation and the real hardware. Finally, a brief summary of the experimental campaign is provided.
